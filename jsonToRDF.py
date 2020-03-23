@@ -3,12 +3,20 @@ from rdflib.namespace import RDF, FOAF, DCTERMS
 import json
 import re
 import sys
+import os
 
-filename = sys.argv[1] #"00acd3fd31ed0cde8df286697caefc5298e54df1.json"
+g = Graph()
+resourse = "https://data.dice-research.org/covid19/resource#"
+ndice = Namespace(resourse)
+schema = Namespace("http://schema.org/")
+vcard = Namespace("http://www.w3.org/2006/vcard/ns#")
+bibtex = Namespace("http://purl.org/net/nknouf/ns/bibtex#") 
+swc = Namespace("http://data.semanticweb.org/ns/swc/ontology#")
+prov = Namespace("http://www.w3.org/ns/prov#")
 
 def addAuthors(authors, subject):
     for a in authors:
-        name = (a['first'] + a['last']).replace(" ", "")
+        name = re.sub("[^A-Za-z]", "", (a['first'] + a['last']))  
         g.add( (subject, bibtex.hasAuthor, ndice[name]) )
         g.add( (ndice[name], RDF.type, FOAF.Person) )
         g.add( (ndice[name], FOAF.firstName, Literal(a['first'])) )
@@ -34,10 +42,10 @@ def addAuthors(authors, subject):
                 if 'country' in location and len(location['country']) != 0:    
                     g.add( (ndice[name], vcard['country-name'], Literal(location['country'])) )
 
-def addBibEntries(link):
-    curLink = link.strip()
+def addBibEntries(bib_entries, sectionObject, datastore, link):
+    curLink = str(link).strip()
     bibId = datastore["paper_id"] + 'B' + curLink
-    g.add( (sectionObject[sectionName], ndice.relatedBibEntry, ndice[bibId]) )
+    g.add( (sectionObject, ndice.relatedBibEntry, ndice[bibId]) )
     if 'BIBREF'+curLink in bib_entries:
         bibTitle = bib_entries['BIBREF'+curLink]['title']
         g.add( (ndice[bibId], RDF.type , bibtex.Entry) )
@@ -45,80 +53,74 @@ def addBibEntries(link):
         bibAuthors = bib_entries['BIBREF'+curLink]['authors']
         addAuthors(bibAuthors, ndice[bibId])
 
-if filename:
-    with open(filename, 'r') as f:
-        datastore = json.load(f)
+def handleFile(filename):
+    if filename:
+        with open(filename, 'r') as f:
+            datastore = json.load(f)
 
-sections = ['Abstract', 'Introduction', 'Background',
- 'Relatedwork', 'Prelimenaries', 'Conclusion', 'Experiment', 'Discussion']
-title = datastore["metadata"]["title"]
-authors = datastore["metadata"]["authors"]
-body_text = datastore["body_text"]
-bib_entries = datastore["bib_entries"]
+    sections = ['Abstract', 'Introduction', 'Background',
+     'Relatedwork', 'Prelimenaries', 'Conclusion', 'Experiment', 'Discussion']
+    title = datastore["metadata"]["title"]
+    authors = datastore["metadata"]["authors"]
+    body_text = datastore["body_text"]
+    bib_entries = datastore["bib_entries"]
 
-resourse = "https://data.dice-research.org/covid19/resource#"
+    dice = URIRef(resourse+datastore["paper_id"])
+    linda = BNode()
 
-dice = URIRef(resourse+datastore["paper_id"])
-linda = BNode()
+    schema.author
 
-ndice = Namespace(resourse)
-schema = Namespace("http://schema.org/")
-vcard = Namespace("http://www.w3.org/2006/vcard/ns#")
-bibtex = Namespace("http://purl.org/net/nknouf/ns/bibtex#") 
-swc = Namespace("http://data.semanticweb.org/ns/swc/ontology#")
-prov = Namespace("http://www.w3.org/ns/prov#")
+    g.namespace_manager.bind("covid", ndice)
+    g.namespace_manager.bind("schema", schema)
+    g.namespace_manager.bind("dcterms", DCTERMS)
+    g.namespace_manager.bind("foaf", FOAF)
+    g.namespace_manager.bind("vcard", vcard)
+    g.namespace_manager.bind("bibtex", bibtex)
+    g.namespace_manager.bind("swc", swc)
+    g.namespace_manager.bind("prov", prov)
 
-schema.author
+    # the provenance
+    g.add( (dice, prov.hadPrimarySource, ndice.commercialUseDataset) )
+    g.add( (ndice.commercialUseDataset, RDF.type, prov.Entity) )
+    g.add( (ndice.commercialUseDataset, prov.wasDerivedFrom, Literal('https://ai2-semanticscholar-cord-19.s3-us-west-2.amazonaws.com/2020-03-20/comm_use_subset.tar.gz')) )
+    #
 
-g = Graph()
-g.namespace_manager.bind("dice", ndice)
-g.namespace_manager.bind("schema", schema)
-g.namespace_manager.bind("dcterms", DCTERMS)
-g.namespace_manager.bind("foaf", FOAF)
-g.namespace_manager.bind("vcard", vcard)
-g.namespace_manager.bind("bibtex", bibtex)
-g.namespace_manager.bind("swc", swc)
-g.namespace_manager.bind("prov", prov)
+    g.add( (dice, DCTERMS.title, Literal(title)) )
+    g.add( (dice, RDF.type, swc.Paper) )
+    addAuthors(authors, dice)
 
-# the provenance
-g.add( (dice, prov.hadPrimarySource, ndice.commercialUseDataset) )
-g.add( (ndice.commercialUseDataset, RDF.type, prov.Entity) )
-g.add( (ndice.commercialUseDataset, prov.wasDerivedFrom, Literal('https://ai2-semanticscholar-cord-19.s3-us-west-2.amazonaws.com/2020-03-20/comm_use_subset.tar.gz')) )
-#
+    for body in body_text:
+        sectionName = None
+        for s in sections:
+            if s.lower() in body['section'].lower():
+                sectionName = s 
+        if sectionName == None:
+            sectionName = 'Body'              
+        section = 'has' + sectionName
+        sectionObject = Namespace(resourse+datastore["paper_id"]+"_")
+        g.add( (dice, ndice[section], sectionObject[sectionName]) )
+        text = body['text']
+        g.add( (sectionObject[sectionName], schema.text, Literal(text)) )
+        # [1] [1, 2, 3]
+        r1 = re.findall(r"\[([0-9 ,]+)\]", text)
+        # [1-5]
+        r2 = re.findall(r"\[([0-9]+)\-([0-9]+)\]",text)
+        for l in r1:
+            l2 = re.split(",| ", l)
+            for link in l2:
+                addBibEntries(bib_entries, sectionObject[sectionName], datastore, link)
 
-g.add( (dice, DCTERMS.title, Literal(title)) )
-g.add( (dice, RDF.type, swc.Paper) )
-addAuthors(authors, dice)
+        for rangeLinks in r2:
+            start = rangeLinks[0]
+            end = rangeLinks[1]
+            for link in range(int(start), int(end)):
+                addBibEntries(bib_entries, sectionObject[sectionName], datastore, link)
 
-for body in body_text:
-    sectionName = None
-    for s in sections:
-        if s.lower() in body['section'].lower():
-            sectionName = s 
-    if sectionName == None:
-        sectionName = 'Body'              
-    section = 'has' + sectionName
-    sectionObject = Namespace(resourse+datastore["paper_id"]+"_")
-    g.add( (dice, ndice[section], sectionObject[sectionName]) )
-    text = body['text']
-    g.add( (sectionObject[sectionName], schema.text, Literal(text)) )
-    # [1] [1, 2, 3]
-    r1 = re.findall(r"\[([0-9 ,]+)\]", text)
-    # [1-5]
-    r2 = re.findall(r"\[([0-9]+)\-([0-9]+)\]",text)
-    for l in r1:
-        l2 = l.split(',')
-        for link in l2:
-            addBibEntries(link)
-
-    for rangeLinks in r2:
-        start = rangeLinks[0]
-        end = rangeLinks[1]
-        for link in range(start, end):
-            addBibEntries(link)
+dirname = sys.argv[1]
+for filename in os.listdir(dirname):  
+    handleFile(dirname+"/"+filename)
 
 serilizedRDF = g.serialize(format='turtle')
-
 f = open("corona.ttl", "w")
 f.write(serilizedRDF.decode("utf-8"))
 f.close()
