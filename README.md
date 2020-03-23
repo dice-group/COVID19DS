@@ -1,3 +1,3 @@
 # COVID19DS
 
-To run script: python3 jsonToRDF.py
+To run script: python3 jsonToRDF.py *.json

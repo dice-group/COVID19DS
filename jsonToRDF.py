@@ -2,8 +2,9 @@ from rdflib import URIRef, BNode, Literal, Namespace, Graph
 from rdflib.namespace import RDF, FOAF, DCTERMS
 import json
 import re
+import sys
 
-filename = "00acd3fd31ed0cde8df286697caefc5298e54df1.json"
+filename = sys.argv[1] #"00acd3fd31ed0cde8df286697caefc5298e54df1.json"
 
 def addAuthors(authors, subject):
     for a in authors:
@@ -17,7 +18,7 @@ def addAuthors(authors, subject):
         if len(a['suffix']) != 0:
             g.add( (ndice[name], ndice.hasSuffix, Literal(a['suffix'])) )
         if 'email' in a and len(a['email']) != 0:
-            g.add( (ndice[name], vcard.hasEmail, Literal(a['email'])) )
+            g.add( (ndice[name], FOAF.mbox, Literal(a['email'])) )
         if 'affiliation' in a and len(a['affiliation']) != 0:
             aff = a['affiliation']
             if len(aff['laboratory']) != 0:
@@ -65,6 +66,7 @@ schema = Namespace("http://schema.org/")
 vcard = Namespace("http://www.w3.org/2006/vcard/ns#")
 bibtex = Namespace("http://purl.org/net/nknouf/ns/bibtex#") 
 swc = Namespace("http://data.semanticweb.org/ns/swc/ontology#")
+prov = Namespace("http://www.w3.org/ns/prov#")
 
 schema.author
 
@@ -76,6 +78,13 @@ g.namespace_manager.bind("foaf", FOAF)
 g.namespace_manager.bind("vcard", vcard)
 g.namespace_manager.bind("bibtex", bibtex)
 g.namespace_manager.bind("swc", swc)
+g.namespace_manager.bind("prov", prov)
+
+# the provenance
+g.add( (dice, prov.hadPrimarySource, ndice.commercialUseDataset) )
+g.add( (ndice.commercialUseDataset, RDF.type, prov.Entity) )
+g.add( (ndice.commercialUseDataset, prov.wasDerivedFrom, Literal('https://ai2-semanticscholar-cord-19.s3-us-west-2.amazonaws.com/2020-03-20/comm_use_subset.tar.gz')) )
+#
 
 g.add( (dice, DCTERMS.title, Literal(title)) )
 g.add( (dice, RDF.type, swc.Paper) )
