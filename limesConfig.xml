@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE LIMES SYSTEM "limes.dtd">
+<LIMES>
+    <PREFIX>
+	   	<NAMESPACE>http://xmlns.com/foaf/0.1/</NAMESPACE>
+	   	<LABEL>foaf</LABEL>
+    </PREFIX>
+    <PREFIX>
+        <NAMESPACE>http://www.w3.org/2002/07/owl#</NAMESPACE>
+        <LABEL>owl</LABEL>
+    </PREFIX>
+    <PREFIX>
+        <NAMESPACE>http://www.w3.org/2011/http#</NAMESPACE>
+        <LABEL>http</LABEL>
+    </PREFIX>
+    <PREFIX>
+		<NAMESPACE>http://linkedgeodata.org/ontology/</NAMESPACE>
+		<LABEL>lgdo</LABEL>
+    </PREFIX>
+
+	<SOURCE>
+		<ID>covid</ID>
+		<ENDPOINT>/home/user/Documents/Others/work/COVID19DS/corona.ttl</ENDPOINT>
+		<VAR>?x</VAR>
+		<PAGESIZE>-1</PAGESIZE>
+		<RESTRICTION>?x a foaf:Person</RESTRICTION>
+		<PROPERTY>foaf:firstName</PROPERTY>
+		<PROPERTY>foaf:lastName</PROPERTY>
+		<TYPE>TURTLE</TYPE>
+	</SOURCE>
+
+
+	<TARGET>
+		<ID>covid1</ID>
+		<ENDPOINT>/home/user/Documents/Others/work/COVID19DS/corona.ttl</ENDPOINT>
+		<VAR>?y</VAR>
+		<PAGESIZE>-1</PAGESIZE>
+		<RESTRICTION>?y a foaf:Person</RESTRICTION>
+		<PROPERTY>foaf:firstName</PROPERTY>
+		<PROPERTY>foaf:lastName</PROPERTY>
+		<TYPE>TURTLE</TYPE>
+	</TARGET>
+
+
+	<METRIC>AND(ExactMatch(x.foaf:firstName,y.foaf:firstName)|1.0,ExactMatch(x.foaf:lastName,y.foaf:lastName)|1.0)</METRIC>
+	<ACCEPTANCE>
+		<THRESHOLD>1.0</THRESHOLD>
+		<FILE>accepted.nt</FILE>
+		<RELATION>owl:sameAs</RELATION>
+	</ACCEPTANCE>
+
+	<REVIEW>
+		<THRESHOLD>1.0</THRESHOLD>
+		<FILE>to_review.nt</FILE>
+		<RELATION>lgdo:near</RELATION>
+	</REVIEW>
+
+	<EXECUTION>
+		<REWRITER>default</REWRITER>
+		<PLANNER>default</PLANNER>
+		<ENGINE>owl:sameAs</ENGINE>
+	</EXECUTION>
+
+	<OUTPUT>NT</OUTPUT>
+</LIMES>
