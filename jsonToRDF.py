@@ -47,14 +47,24 @@ def addAuthors(authors, subject):
 
 def addBibEntries(bib_entries, sectionObject, datastore, link, bibId):
     curLink = str(link).strip()
-    # print(sectionObject)
-    # bibId = datastore["paper_id"] + 'B' + curLink
-    # g.add( (sectionObject, ndice.relatedBibEntry, ndice[bibId]) )
     if 'BIBREF'+curLink in bib_entries:
-        bibTitle = bib_entries['BIBREF'+curLink]['title']
-        # g.add( (ndice[bibId], RDF.type , bibtex.Entry) )
-        g.add( (sectionObject[bibId], bibtex.hasTitle , Literal(bibTitle)) )
-        bibAuthors = bib_entries['BIBREF'+curLink]['authors']
+
+        bib_entry = bib_entries['BIBREF'+curLink]
+        g.add( (sectionObject[bibId], RDF.type , bibtex.Entry) )
+        if bib_entry['title']:
+            g.add( (sectionObject[bibId], bibtex.hasTitle , Literal(bib_entry['title'])) )
+        if bib_entry['year']:
+            g.add( (sectionObject[bibId], bibtex.hasYear , Literal(bib_entry['year'])) )
+        if bib_entry['venue']:
+            g.add( (sectionObject[bibId], schema.EventVenue , Literal(bib_entry['venue'])) )
+        if bib_entry['volume']:
+            g.add( (sectionObject[bibId], bibtex.hasVolume , Literal(bib_entry['volume'])) )
+        if bib_entry['issn']:
+            g.add( (sectionObject[bibId], bibtex.hasISSN , Literal(bib_entry['issn'])) )
+        if bib_entry['pages']:
+            g.add( (sectionObject[bibId], bibtex.Inbook , Literal(bib_entry['pages'])) )
+
+        bibAuthors = bib_entry['authors']
         addAuthors(bibAuthors, sectionObject[bibId])
 
 def addRefs(typeOfSpans, ref_spans, sectionName, sectionObject, datastore, refDict, refSectionDict):
@@ -73,9 +83,6 @@ def addRefs(typeOfSpans, ref_spans, sectionName, sectionObject, datastore, refDi
 
             addBibEntries(datastore['bib_entries'], sectionObject, datastore, ref_span_label, bibId)
             refName = sectionObject[sectionName+'_'+bibId]
-            # refName2 = sectionObject[bibId]
-            # g.add( (refName, nif.beginIndex, Literal(ref_span['start'],datatype=XSD.nonNegativeInteger)) )
-            # g.add( (refName, nif.endIndex, Literal(ref_span['end'],datatype=XSD.nonNegativeInteger)) )
             g.add( (refName, RDF.type, nif.Phrase) )
             g.add( (refName, nif.anchorOf, Literal(ref_span_label)) )
             g.add( (refName, nif.beginIndex, Literal(ref_span['start'],datatype=XSD.nonNegativeInteger)) )
@@ -108,7 +115,6 @@ def addRefs(typeOfSpans, ref_spans, sectionName, sectionObject, datastore, refDi
                 typeOfRefFrom = sdo.Table
                 # "Table"
             typeOfRef = typeOfRefFrom
-            # sectionObject[typeOfRefFrom]
             g.add( (refName2, RDF.type, typeOfRef) )
 
             ref_id = ref_span['ref_id']
@@ -120,7 +126,6 @@ def addRefs(typeOfSpans, ref_spans, sectionName, sectionObject, datastore, refDi
                     # ref
                     refId = datastore['ref_entries']
                     refTitle = refId[ref_id]['text']
-                    # g.add( (refName2, bibtex.hasType,  Literal(refId[ref_id]['type'])) )
                 
                 g.add( (refName2, bibtex.hasTitle,  Literal(refTitle)) )
             
@@ -186,9 +191,6 @@ def handleFile(filename):
         text = body['text']
         ref_spans = body['ref_spans']
 
-        # if  sectionName == 'Body':
-            # sectionName = sectionName+str(bodyNum)
-            # g.add( (dice, ndice[section], sectionObject[sectionName]) )
         s1 = sectionObject['Section'+str(bodyNum)]
         g.add( (sectionObject[sectionName], ndice.hasSection, s1) )
         g.add( (s1, RDF.type, sdo.Section) )
@@ -197,18 +199,14 @@ def handleFile(filename):
         sectionName = 'Section'+str(bodyNum)
         bodyNum += 1
 
-        # else:
-            # g.add( (dice, ndice[section], sectionObject[sectionName]) )
-            # g.add( (sectionObject[sectionName], schema.text, Literal(text)) )
-
         addRefs("ref", ref_spans, sectionName, sectionObject, datastore, refDict, refSectionDict);
         addRefs("cite", body['cite_spans'], sectionName, sectionObject, datastore, refDict, refSectionDict);
         
 
 dirname = sys.argv[1]
-handleFile(dirname)
-# for filename in os.listdir(dirname):  
-#     handleFile(dirname+"/"+filename)
+# handleFile(dirname)
+for filename in os.listdir(dirname):  
+    handleFile(dirname+"/"+filename)
 
 serilizedRDF = g.serialize(format='turtle')
 f = open("corona.ttl", "w")
