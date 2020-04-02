@@ -160,12 +160,14 @@ def handleFile(filename):
     g.namespace_manager.bind("sdo", sdo)
 
     # the provenance
-    g.add( (dice, prov.hadPrimarySource, ndice.commercialUseDataset) )
+    
 
     if sys.argv[2] == 'n':
+        g.add( (dice, prov.hadPrimarySource, ndice.nonCommercialUseDataset) )
         g.add( (ndice.nonCommercialUseDataset, RDF.type, prov.Entity) )
         g.add( (ndice.nonCommercialUseDataset, prov.wasDerivedFrom, Literal('https://ai2-semanticscholar-cord-19.s3-us-west-2.amazonaws.com/2020-03-20/noncomm_use_subset.tar.gz')) )
     else:
+        g.add( (dice, prov.hadPrimarySource, ndice.commercialUseDataset) )
         g.add( (ndice.commercialUseDataset, RDF.type, prov.Entity) )
         g.add( (ndice.commercialUseDataset, prov.wasDerivedFrom, Literal('https://ai2-semanticscholar-cord-19.s3-us-west-2.amazonaws.com/2020-03-20/comm_use_subset.tar.gz')) )
     
