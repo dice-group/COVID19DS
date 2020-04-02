@@ -15,6 +15,7 @@ swc = Namespace("http://data.semanticweb.org/ns/swc/ontology#")
 prov = Namespace("http://www.w3.org/ns/prov#")
 nif = Namespace("http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#")
 its = Namespace("http://www.w3.org/2005/11/its/rdf#")
+sdo = Namespace("http://salt.semanticauthoring.org/ontologies/sdo#")
 
 def addAuthors(authors, subject):
     for a in authors:
@@ -46,33 +47,41 @@ def addAuthors(authors, subject):
 
 def addBibEntries(bib_entries, sectionObject, datastore, link, bibId):
     curLink = str(link).strip()
+    # print(sectionObject)
     # bibId = datastore["paper_id"] + 'B' + curLink
-    g.add( (sectionObject, ndice.relatedBibEntry, ndice[bibId]) )
+    # g.add( (sectionObject, ndice.relatedBibEntry, ndice[bibId]) )
     if 'BIBREF'+curLink in bib_entries:
         bibTitle = bib_entries['BIBREF'+curLink]['title']
-        g.add( (ndice[bibId], RDF.type , bibtex.Entry) )
-        g.add( (ndice[bibId], bibtex.hasTitle , Literal(bibTitle)) )
+        # g.add( (ndice[bibId], RDF.type , bibtex.Entry) )
+        g.add( (sectionObject[bibId], bibtex.hasTitle , Literal(bibTitle)) )
         bibAuthors = bib_entries['BIBREF'+curLink]['authors']
-        addAuthors(bibAuthors, ndice[bibId])
+        addAuthors(bibAuthors, sectionObject[bibId])
 
-def addRefs(typeOfSpans, ref_spans, sectionName, sectionObject, datastore, refDict):
+def addRefs(typeOfSpans, ref_spans, sectionName, sectionObject, datastore, refDict, refSectionDict):
     for ref_span in ref_spans:
 
         ref_span_label = re.sub("[^A-Za-z0-9]", "", ref_span['text'])
         if typeOfSpans == 'cite':
-            bibId = datastore["paper_id"] + '_' + sectionName + '_' + 'B' + ref_span_label
+            bibId = 'B' + ref_span_label
 
-            if bibId in refDict:
-                refDict[bibId] += 1
+            if bibId in refSectionDict:
+                refSectionDict[bibId] += 1
             else:
-                refDict[bibId] = 1
-            numRefLabel = refDict[bibId]
+                refSectionDict[bibId] = 1
+            numRefLabel = refSectionDict[bibId]
             bibId += '_' + str(numRefLabel)
 
-            addBibEntries(datastore['bib_entries'], sectionObject[sectionName], datastore, ref_span_label, bibId)
-            refName = ndice[bibId]
+            addBibEntries(datastore['bib_entries'], sectionObject, datastore, ref_span_label, bibId)
+            refName = sectionObject[sectionName+'_'+bibId]
+            # refName2 = sectionObject[bibId]
+            # g.add( (refName, nif.beginIndex, Literal(ref_span['start'],datatype=XSD.nonNegativeInteger)) )
+            # g.add( (refName, nif.endIndex, Literal(ref_span['end'],datatype=XSD.nonNegativeInteger)) )
+            g.add( (refName, RDF.type, nif.Phrase) )
+            g.add( (refName, nif.anchorOf, Literal(ref_span_label)) )
             g.add( (refName, nif.beginIndex, Literal(ref_span['start'],datatype=XSD.nonNegativeInteger)) )
             g.add( (refName, nif.endIndex, Literal(ref_span['end'],datatype=XSD.nonNegativeInteger)) )
+            g.add( (refName, nif.referenceContext, sectionObject[sectionName]) )
+            g.add( (refName, its.taIdentRef, sectionObject[bibId]) )
         else:
             section_with_ref = sectionName + '_' + ref_span_label
             if section_with_ref in refDict:
@@ -86,17 +95,20 @@ def addRefs(typeOfSpans, ref_spans, sectionName, sectionObject, datastore, refDi
             refName2 = sectionObject[ref_span_with_num_label]
 
             g.add( (refName, RDF.type, nif.Phrase) )
-            g.add( (refName, nif.anchorOf, Literal(ref_span['text'])) )
+            g.add( (refName, nif.anchorOf, Literal(ref_span_label)) )
             g.add( (refName, nif.beginIndex, Literal(ref_span['start'],datatype=XSD.nonNegativeInteger)) )
             g.add( (refName, nif.endIndex, Literal(ref_span['end'],datatype=XSD.nonNegativeInteger)) )
             g.add( (refName, nif.referenceContext, sectionObject[sectionName]) )
             
             g.add( (refName, its.taIdentRef, ndice[refName2]) )
             if "fig" in ref_span_label.lower():
-                typeOfRefFrom = "Figure"  
+                typeOfRefFrom = sdo.Figure
+                # "Figure"  
             else:
-                typeOfRefFrom = "Table"
-            typeOfRef = sectionObject[typeOfRefFrom]
+                typeOfRefFrom = sdo.Table
+                # "Table"
+            typeOfRef = typeOfRefFrom
+            # sectionObject[typeOfRefFrom]
             g.add( (refName2, RDF.type, typeOfRef) )
 
             ref_id = ref_span['ref_id']
@@ -108,7 +120,7 @@ def addRefs(typeOfSpans, ref_spans, sectionName, sectionObject, datastore, refDi
                     # ref
                     refId = datastore['ref_entries']
                     refTitle = refId[ref_id]['text']
-                    g.add( (refName2, bibtex.hasType,  Literal(refId[ref_id]['type'])) )
+                    # g.add( (refName2, bibtex.hasType,  Literal(refId[ref_id]['type'])) )
                 
                 g.add( (refName2, bibtex.hasTitle,  Literal(refTitle)) )
             
@@ -140,6 +152,7 @@ def handleFile(filename):
     g.namespace_manager.bind("prov", prov)
     g.namespace_manager.bind("nif", nif)
     g.namespace_manager.bind("its", its)
+    g.namespace_manager.bind("sdo", sdo)
 
     # the provenance
     g.add( (dice, prov.hadPrimarySource, ndice.commercialUseDataset) )
@@ -161,6 +174,7 @@ def handleFile(filename):
     bodyNum = 1
     for body in body_text:
         sectionName = None
+        refSectionDict = {}
         for s in sections:
             if s.lower() in body['section'].lower():
                 sectionName = s 
@@ -172,19 +186,23 @@ def handleFile(filename):
         text = body['text']
         ref_spans = body['ref_spans']
 
-        if  sectionName == 'Body':
+        # if  sectionName == 'Body':
             # sectionName = sectionName+str(bodyNum)
             # g.add( (dice, ndice[section], sectionObject[sectionName]) )
-            g.add( (sectionObject[sectionName], bibtex.hasTitle, Literal(body['section'])) )
-            g.add( (sectionObject[sectionName], nif.isString, Literal(text)) )
-            bodyNum += 1
+        s1 = sectionObject['Section'+str(bodyNum)]
+        g.add( (sectionObject[sectionName], ndice.hasSection, s1) )
+        g.add( (s1, RDF.type, sdo.Section) )
+        g.add( (s1, bibtex.hasTitle, Literal(body['section'])) )
+        g.add( (s1, nif.isString, Literal(text)) )
+        sectionName = 'Section'+str(bodyNum)
+        bodyNum += 1
 
-        else:
+        # else:
             # g.add( (dice, ndice[section], sectionObject[sectionName]) )
-            g.add( (sectionObject[sectionName], schema.text, Literal(text)) )
+            # g.add( (sectionObject[sectionName], schema.text, Literal(text)) )
 
-        addRefs("ref", ref_spans, sectionName, sectionObject, datastore, refDict);
-        addRefs("cite", body['cite_spans'], sectionName, sectionObject, datastore, refDict);
+        addRefs("ref", ref_spans, sectionName, sectionObject, datastore, refDict, refSectionDict);
+        addRefs("cite", body['cite_spans'], sectionName, sectionObject, datastore, refDict, refSectionDict);
         
 
 dirname = sys.argv[1]
