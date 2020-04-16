@@ -5,19 +5,21 @@ To run the generation ot the dataset, the following command is used:
 python3 jsonToRDF.py folderName/ option
 ```
 
-options:
-c - commercial use subset
-n - non-commercial use subset 
-custom - custom license subset
+options:  
+c - commercial use subset  
+n - non-commercial use subset  
+custom - custom license subset  
 
 ## Namespaces
 
 Below we use the following namespaces:
 
 ```turtle
+@prefix bibo: <http://purl.org/ontology/bibo/> .
 @prefix bibtex: <http://purl.org/net/nknouf/ns/bibtex#> .
 @prefix covid: <https://data.dice-research.org/covid19/resource#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix fabio: <http://purl.org/spar/fabio/> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix its: <http://www.w3.org/2005/11/its/rdf#> .
 @prefix nif: <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> .
