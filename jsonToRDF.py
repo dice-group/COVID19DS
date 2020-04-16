@@ -17,6 +17,7 @@ nif = Namespace("http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#
 its = Namespace("http://www.w3.org/2005/11/its/rdf#")
 sdo = Namespace("http://salt.semanticauthoring.org/ontologies/sdo#")
 bibo = Namespace("http://purl.org/ontology/bibo/")
+fabio = Namespace("http://purl.org/spar/fabio/")
 
 def addAuthors(authors, subject):
     for a in authors:
@@ -64,10 +65,10 @@ def addBibEntries(bib_entries, sectionObject, datastore, link, bibId):
             g.add( (sectionObject[bibId], bibtex.hasISSN , Literal(bib_entry['issn'])) )
         if bib_entry['pages']:
             g.add( (sectionObject[bibId], bibtex.Inbook , Literal(bib_entry['pages'])) )
-        if bib_entry['other_ids']['DOI']:
+        if 'DOI' in bib_entry['other_ids'] and bib_entry['other_ids']['DOI']:
             g.add( (sectionObject[bibId], bibo.doi , Literal(bib_entry['other_ids']['DOI'][0])) )
-        if bib_entry['other_ids']:
-            print(bib_entry['other_ids'])
+        # if bib_entry['other_ids']:
+            # print(bib_entry['other_ids'])
 
         bibAuthors = bib_entry['authors']
         addAuthors(bibAuthors, sectionObject[bibId])
@@ -168,6 +169,7 @@ def handleFile(filename):
     g.namespace_manager.bind("its", its)
     g.namespace_manager.bind("sdo", sdo)
     g.namespace_manager.bind("bibo", bibo)
+    g.namespace_manager.bind("fabio", fabio)
 
     # the provenance
     
@@ -189,6 +191,9 @@ def handleFile(filename):
     if not title:
         g.add( (dice, DCTERMS.title, Literal(title)) )
     g.add( (dice, RDF.type, swc.Paper) )
+    g.add( (dice, RDF.type, fabio.ResearchPaper) )
+    g.add( (dice, RDF.type, bibo.AcademicArticle) )
+    g.add( (dice, RDF.type, schema.ScholarlyArticle) )
     addAuthors(authors, dice)
 
     refDict = {}
@@ -221,8 +226,16 @@ def handleFile(filename):
 
 dirname = sys.argv[1]
 # handleFile(dirname)
-for filename in os.listdir(dirname):  
-    handleFile(dirname+"/"+filename)
+
+dirname1 = dirname+"pdf_json"
+print(dirname1)
+for filename in os.listdir(dirname1):  
+    handleFile(dirname1+"/"+filename)
+
+dirname2 = dirname+"pmc_json"
+print(dirname2)
+for filename in os.listdir(dirname2):  
+    handleFile(dirname2+"/"+filename)    
 
 serilizedRDF = g.serialize(format='turtle')
 f = open("corona.ttl", "w")
