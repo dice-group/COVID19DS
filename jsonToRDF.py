@@ -16,6 +16,7 @@ prov = Namespace("http://www.w3.org/ns/prov#")
 nif = Namespace("http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#")
 its = Namespace("http://www.w3.org/2005/11/its/rdf#")
 sdo = Namespace("http://salt.semanticauthoring.org/ontologies/sdo#")
+bibo = Namespace("http://purl.org/ontology/bibo/")
 
 def addAuthors(authors, subject):
     for a in authors:
@@ -28,7 +29,7 @@ def addAuthors(authors, subject):
             g.add( (ndice[name], ndice.middleName, Literal(a['middle'][0])) )
         if len(a['suffix']) != 0:
             g.add( (ndice[name], ndice.hasSuffix, Literal(a['suffix'])) )
-        if 'email' in a and len(a['email']) != 0:
+        if 'email' in a and a['email'] is not None and len(a['email']) != 0:
             g.add( (ndice[name], FOAF.mbox, Literal(a['email'])) )
         if 'affiliation' in a and len(a['affiliation']) != 0:
             aff = a['affiliation']
@@ -63,14 +64,22 @@ def addBibEntries(bib_entries, sectionObject, datastore, link, bibId):
             g.add( (sectionObject[bibId], bibtex.hasISSN , Literal(bib_entry['issn'])) )
         if bib_entry['pages']:
             g.add( (sectionObject[bibId], bibtex.Inbook , Literal(bib_entry['pages'])) )
+        if bib_entry['other_ids']['DOI']:
+            g.add( (sectionObject[bibId], bibo.doi , Literal(bib_entry['other_ids']['DOI'][0])) )
+        if bib_entry['other_ids']:
+            print(bib_entry['other_ids'])
 
         bibAuthors = bib_entry['authors']
         addAuthors(bibAuthors, sectionObject[bibId])
 
 def addRefs(typeOfSpans, ref_spans, sectionName, sectionObject, datastore, refDict, refSectionDict):
     for ref_span in ref_spans:
-
-        ref_span_label = re.sub("[^A-Za-z0-9]", "", ref_span['text'])
+        # print(ref_span)
+        if 'text' in ref_span:
+            ref_span_text = ref_span['text']
+        else:
+            ref_span_text = ref_span['mention']    
+        ref_span_label = re.sub("[^A-Za-z0-9]", "", ref_span_text)
         if typeOfSpans == 'cite':
             bibId = 'B' + ref_span_label
 
@@ -158,6 +167,7 @@ def handleFile(filename):
     g.namespace_manager.bind("nif", nif)
     g.namespace_manager.bind("its", its)
     g.namespace_manager.bind("sdo", sdo)
+    g.namespace_manager.bind("bibo", bibo)
 
     # the provenance
     
@@ -166,11 +176,15 @@ def handleFile(filename):
         g.add( (dice, prov.hadPrimarySource, ndice.nonCommercialUseDataset) )
         g.add( (ndice.nonCommercialUseDataset, RDF.type, prov.Entity) )
         g.add( (ndice.nonCommercialUseDataset, prov.wasDerivedFrom, Literal('https://ai2-semanticscholar-cord-19.s3-us-west-2.amazonaws.com/2020-03-20/noncomm_use_subset.tar.gz')) )
-    else:
+    if sys.argv[2] == 'c':
         g.add( (dice, prov.hadPrimarySource, ndice.commercialUseDataset) )
         g.add( (ndice.commercialUseDataset, RDF.type, prov.Entity) )
         g.add( (ndice.commercialUseDataset, prov.wasDerivedFrom, Literal('https://ai2-semanticscholar-cord-19.s3-us-west-2.amazonaws.com/2020-03-20/comm_use_subset.tar.gz')) )
-    
+    if sys.argv[2] == 'custom':
+        g.add( (dice, prov.hadPrimarySource, ndice.customLicenseDataset) )
+        g.add( (ndice.customLicenseDataset, RDF.type, prov.Entity) )
+        g.add( (ndice.customLicenseDataset, prov.wasDerivedFrom, Literal('https://ai2-semanticscholar-cord-19.s3-us-west-2.amazonaws.com/2020-04-10/custom_license.tar.gz')) )
+  
     #
     if not title:
         g.add( (dice, DCTERMS.title, Literal(title)) )
