@@ -1,9 +1,12 @@
 # COVID19DS
+The RDF file generation is based on papers related to the COVID-19 and coronavirus-related research.
 
-To run the generation ot the dataset, the following command is used: 
+To run the generation of the dataset, the following command is used:
 ```
 python3 jsonToRDF.py folderName/ option
 ```
+
+folderName/ - the name of the folder that contains the subset of papers. Each paper is represented as a single JSON object.
 
 options:  
 c - commercial use subset  
@@ -32,4 +35,44 @@ Below we use the following namespaces:
 @prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+```
+
+## Article metadata
+The base URI is represented as 'https://data.dice-research.org/covid19/resource#paperId' where paperId is the paper_id from the JSON file of the paper.
+
+The following items are included as an article metadata:
+- authors (`bibtex:hasAuthor`)
+- primary source (`prov:hadPrimarySource`)
+
+Moreover, the article metadata includes the linking to different parts of the paper (body, discussion, introduction). There are predefined names of sections: 'Abstract', 'Introduction', 'Background', 'Relatedwork', 'Prelimenaries', 'Conclusion', 'Experiment', 'Discussion'. If the section name is different from predefined names than the section name 'Body' is chosen.
+For example:
+- `covid:hasBody covid:PMC1616946_Body`
+- `covid:hasDiscussion covid:PMC1616946_Discussion`
+- `covid:hasIntroduction covid:PMC1616946_Introduction`.
+
+Here is an example of article metadata:
+```turtle
+covid:PMC1616946 a swc:Paper,
+        bibo:AcademicArticle,
+        fabio:ResearchPaper,
+        schema:ScholarlyArticle ;
+    bibtex:hasAuthor covid:ChristineAnderson,
+        covid:ClarkHenderson,
+        covid:MichaelHoward ;
+    prov:hadPrimarySource covid:nonCommercialUseDataset ;
+    covid:hasBody covid:PMC1616946_Body ;
+    covid:hasDiscussion covid:PMC1616946_Discussion ;
+    covid:hasIntroduction covid:PMC1616946_Introduction .
+```
+
+## Provenance information
+The provenance information performs the information about the source of the paper. There are 3 available types of source subsets that are handled by the current script:
+- `covid:nonCommercialUseDataset`
+- `covid:commercialUseDataset`
+- `covid:customLicenseDataset`.
+
+The example of the provenance information is shown below:
+```turtle
+covid:nonCommercialUseDataset a prov:Entity ;
+    prov:wasDerivedFrom "https://ai2-semanticscholar-cord-19.s3-us-west-2.amazonaws.com/2020-03-20/noncomm_use_subset.tar.gz" .
 ```
