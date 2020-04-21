@@ -1,5 +1,5 @@
 from rdflib import URIRef, BNode, Literal, Namespace, Graph, XSD
-from rdflib.namespace import RDF, FOAF, DCTERMS
+from rdflib.namespace import RDF, FOAF, DCTERMS, OWL
 import json
 import re
 import sys
@@ -170,6 +170,10 @@ def handleFile(filename):
     g.namespace_manager.bind("sdo", sdo)
     g.namespace_manager.bind("bibo", bibo)
     g.namespace_manager.bind("fabio", fabio)
+    g.namespace_manager.bind("owl", OWL)
+
+    # sameAs linking
+    g.add( (dice, OWL.sameAs, Literal("http://ns.inria.fr/covid19/"+datastore["paper_id"])) )
 
     # the provenance
     
