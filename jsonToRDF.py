@@ -6,7 +6,7 @@ import sys
 import os
 
 g = Graph()
-resourse = "https://data.dice-research.org/covid19/resource#"
+resourse = "https://covid-19ds.data.dice-research.org/resource#"
 ndice = Namespace(resourse)
 schema = Namespace("http://schema.org/")
 vcard = Namespace("http://www.w3.org/2006/vcard/ns#")
@@ -173,7 +173,7 @@ def handleFile(filename):
     g.namespace_manager.bind("owl", OWL)
 
     # sameAs linking
-    g.add( (dice, OWL.sameAs, Literal("http://ns.inria.fr/covid19/"+datastore["paper_id"])) )
+    g.add( (dice, OWL.sameAs, URIRef("http://ns.inria.fr/covid19/"+datastore["paper_id"])) )
 
     # the provenance
     
