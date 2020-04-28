@@ -146,7 +146,7 @@ def handleFile(filename):
             datastore = json.load(f)
 
     sections = ['Abstract', 'Introduction', 'Background',
-     'Relatedwork', 'Prelimenaries', 'Conclusion', 'Experiment', 'Discussion']
+     'Relatedwork', 'Preliminaries', 'Conclusion', 'Experiment', 'Discussion']
     title = datastore["metadata"]["title"]
     authors = datastore["metadata"]["authors"]
     body_text = datastore["body_text"]
