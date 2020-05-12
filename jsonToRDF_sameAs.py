@@ -6,7 +6,7 @@ import sys
 import os
 
 g = Graph()
-resourse = "https://data.dice-research.org/covid19/resource#"
+resourse = "https://covid-19ds.data.dice-research.org/resource/"
 ndice = Namespace(resourse)
 schema = Namespace("http://schema.org/")
 vcard = Namespace("http://www.w3.org/2006/vcard/ns#")
@@ -51,14 +51,14 @@ def handleFile(filename):
     g.namespace_manager.bind("fabio", fabio)
     g.namespace_manager.bind("owl", OWL)
 
-    # g.add( (dice, OWL.sameAs, Literal("http://ns.inria.fr/covid19/"+datastore["paper_id"])) )
+    # g.add( (dice, OWL.sameAs, URIRef("http://ns.inria.fr/covid19/"+datastore["paper_id"])) )
     if 'PMC' in datastore['paper_id']:    
-        g.add( (dice, OWL.sameAs, Literal("https://www.ncbi.nlm.nih.gov/pmc/articles/"+datastore["paper_id"])) )
+        g.add( (dice, OWL.sameAs, URIRef("https://www.ncbi.nlm.nih.gov/pmc/articles/"+datastore["paper_id"])) )
     if 'PMC' in datastore['paper_id']:
         pmc_id = datastore['paper_id'][3:]
-        # g.add( (dice, OWL.sameAs, Literal("http://pubannotation.org/docs/sourcedb/PMC/sourceid/"+pmc_id)) )
+        # g.add( (dice, OWL.sameAs, URIRef("http://pubannotation.org/docs/sourcedb/PMC/sourceid/"+pmc_id)) )
     else:
-        g.add( (dice, OWL.sameAs, Literal("http://pubannotation.org/docs/sourcedb/CORD-19/sourceid/"+datastore["paper_id"])) )
+        g.add( (dice, OWL.sameAs, URIRef("http://pubannotation.org/docs/sourcedb/CORD-19/sourceid/"+datastore["paper_id"])) )
     
 dirname = sys.argv[1]
 # handleFile(dirname)
