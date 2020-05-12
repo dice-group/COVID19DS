@@ -174,7 +174,14 @@ def handleFile(filename):
 
     # sameAs linking
     g.add( (dice, OWL.sameAs, URIRef("http://ns.inria.fr/covid19/"+datastore["paper_id"])) )
-
+    if 'PMC' in datastore['paper_id']:    
+        g.add( (dice, OWL.sameAs, URIRef("https://www.ncbi.nlm.nih.gov/pmc/articles/"+datastore["paper_id"])) )
+    if 'PMC' in datastore['paper_id']:
+        pmc_id = datastore['paper_id'][3:]
+        # g.add( (dice, OWL.sameAs, URIRef("http://pubannotation.org/docs/sourcedb/PMC/sourceid/"+pmc_id)) )
+    else:
+        g.add( (dice, OWL.sameAs, URIRef("http://pubannotation.org/docs/sourcedb/CORD-19/sourceid/"+datastore["paper_id"])) )
+    
     # the provenance
     
 
