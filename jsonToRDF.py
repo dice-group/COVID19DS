@@ -117,7 +117,7 @@ def addRefs(typeOfSpans, ref_spans, sectionName, sectionObject, datastore, refDi
             g.add( (refName, nif.endIndex, Literal(ref_span['end'],datatype=XSD.nonNegativeInteger)) )
             g.add( (refName, nif.referenceContext, sectionObject[sectionName]) )
             
-            g.add( (refName, its.taIdentRef, ndice[refName2]) )
+            g.add( (refName, its.taIdentRef, refName2) )
             if "fig" in ref_span_label.lower():
                 typeOfRefFrom = sdo.Figure
                 # "Figure"  
