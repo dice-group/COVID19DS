@@ -20,7 +20,7 @@ Below we use the following namespaces:
 ```turtle
 @prefix bibo: <http://purl.org/ontology/bibo/> .
 @prefix bibtex: <http://purl.org/net/nknouf/ns/bibtex#> .
-@prefix covid: <https://data.dice-research.org/covid19/resource#> .
+@prefix covid: <https://covid-19ds.data.dice-research.org/resource/> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix fabio: <http://purl.org/spar/fabio/> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
@@ -38,7 +38,7 @@ Below we use the following namespaces:
 ```
 
 ## Article metadata
-The base URI is represented as 'https://data.dice-research.org/covid19/resource#paperId' where paperId is the paper_id from the JSON file of the paper.
+The base URI is represented as 'https://covid-19ds.data.dice-research.org/resource/paperId' where paperId is the paper_id from the JSON file of the paper.
 
 The following items are included as an article metadata:
 - authors (`bibtex:hasAuthor`)

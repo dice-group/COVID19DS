@@ -6,7 +6,7 @@ import sys
 import os
 
 g = Graph()
-resourse = "https://covid-19ds.data.dice-research.org/resource#"
+resourse = "https://covid-19ds.data.dice-research.org/resource/"
 ndice = Namespace(resourse)
 schema = Namespace("http://schema.org/")
 vcard = Namespace("http://www.w3.org/2006/vcard/ns#")
