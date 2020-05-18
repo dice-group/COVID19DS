@@ -181,7 +181,16 @@ def handleFile(filename):
         # g.add( (dice, OWL.sameAs, URIRef("http://pubannotation.org/docs/sourcedb/PMC/sourceid/"+pmc_id)) )
     else:
         g.add( (dice, OWL.sameAs, URIRef("http://pubannotation.org/docs/sourcedb/CORD-19/sourceid/"+datastore["paper_id"])) )
+        g.add( (dice, OWL.sameAs, URIRef("https://data.linkeddatafragments.org/covid19?object=http%3A%2F%2Fidlab.github.io%2Fcovid19%23"+datastore["paper_id"])) )
+        if sys.argv[2] == 'c':
+            g.add( (dice, OWL.sameAs, URIRef("https://fhircat.org/cord-19/fhir/Commercial/Composition/"+datastore["paper_id"]+".json")) )
+        
+        if sys.argv[2] == 'n':
+            g.add( (dice, OWL.sameAs, URIRef("https://fhircat.org/cord-19/fhir/Non-commercial/Composition/"+datastore["paper_id"]+".json")) )
     
+        if sys.argv[2] == 'custom':
+            g.add( (dice, OWL.sameAs, URIRef("https://fhircat.org/cord-19/fhir/PMC/Composition/"+datastore["paper_id"]+".json")) )
+
     # the provenance
     
 
@@ -199,7 +208,7 @@ def handleFile(filename):
         g.add( (ndice.customLicenseDataset, prov.wasDerivedFrom, Literal('https://ai2-semanticscholar-cord-19.s3-us-west-2.amazonaws.com/2020-04-10/custom_license.tar.gz')) )
   
     #
-    if not title:
+    if title:
         g.add( (dice, DCTERMS.title, Literal(title)) )
     g.add( (dice, RDF.type, swc.Paper) )
     g.add( (dice, RDF.type, fabio.ResearchPaper) )
