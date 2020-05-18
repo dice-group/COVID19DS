@@ -1,5 +1,5 @@
 from rdflib import URIRef, BNode, Literal, Namespace, Graph, XSD
-from rdflib.namespace import RDF, FOAF, DCTERMS, OWL
+from rdflib.namespace import RDF, RDFS, FOAF, DCTERMS, OWL
 import json
 import re
 import sys
@@ -63,14 +63,14 @@ def handleFile(filename):
 	else:
 		g.add( (dice, OWL.sameAs, URIRef("https://data.linkeddatafragments.org/covid19?object=http%3A%2F%2Fidlab.github.io%2Fcovid19%23"+datastore["paper_id"])) )
 		if sys.argv[2] == 'c':
-			g.add( (dice, OWL.sameAs, URIRef("https://fhircat.org/cord-19/fhir/Commercial/Composition/"+datastore["paper_id"]+".json")) )
-		
+			g.add( (dice, OWL.sameAs, URIRef("https://fhircat.org/cord-19/fhir/Commercial/Composition/"+datastore["paper_id"]+".ttl")) )
+			g.add( (dice, RDFS.seeAlso, URIRef("https://fhircat.org/cord-19/fhir/Commercial/Composition/"+datastore["paper_id"]+".json")) )
 		if sys.argv[2] == 'n':
-			g.add( (dice, OWL.sameAs, URIRef("https://fhircat.org/cord-19/fhir/Non-commercial/Composition/"+datastore["paper_id"]+".json")) )
-		
+			g.add( (dice, OWL.sameAs, URIRef("https://fhircat.org/cord-19/fhir/Non-commercial/Composition/"+datastore["paper_id"]+".ttl")) )
+			g.add( (dice, RDFS.seeAlso, URIRef("https://fhircat.org/cord-19/fhir/Non-commercial/Composition/"+datastore["paper_id"]+".json")) )
 		if sys.argv[2] == 'custom':
-			g.add( (dice, OWL.sameAs, URIRef("https://fhircat.org/cord-19/fhir/PMC/Composition/"+datastore["paper_id"]+".json")) )
-
+			g.add( (dice, OWL.sameAs, URIRef("https://fhircat.org/cord-19/fhir/PMC/Composition/"+datastore["paper_id"]+".ttl")) )
+			g.add( (dice, RDFS.seeAlso, URIRef("https://fhircat.org/cord-19/fhir/PMC/Composition/"+datastore["paper_id"]+".json")) )
 		# g.add( (dice, OWL.sameAs, URIRef("http://pubannotation.org/docs/sourcedb/CORD-19/sourceid/"+datastore["paper_id"])) )
 	
 dirname = sys.argv[1]
