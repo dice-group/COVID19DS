@@ -214,10 +214,29 @@ def handleFile(filename):
     g.add( (dice, RDF.type, fabio.ResearchPaper) )
     g.add( (dice, RDF.type, bibo.AcademicArticle) )
     g.add( (dice, RDF.type, schema.ScholarlyArticle) )
+    g.add( (dice, DCTERMS.license, URIRef('https://www.gnu.org/licenses/gpl-3.0.html')) )
+    g.add( (URIRef('https://www.gnu.org/licenses/gpl-3.0.html'), RDFS.label, Literal('GNU Affero General Public License v3.0')) )
     addAuthors(authors, dice)
 
+    # abstract
+
     refDict = {}
+    refSectionDict = {}
     bodyNum = 1
+    abstract = datastore['abstract'][0]
+    sectionObject = Namespace(resourse+datastore["paper_id"]+"_")
+    g.add( (dice, ndice['hasAbstract'], sectionObject['Abstract']) )
+    s1 = sectionObject['Section'+str(bodyNum)]
+    g.add( (sectionObject['Abstract'], ndice.hasSection, s1) )
+    g.add( (s1, RDF.type, sdo.Section) )
+    g.add( (s1, bibtex.hasTitle, Literal(abstract['section'])) )
+    g.add( (s1, nif.isString, Literal(abstract['text'])) )
+    addRefs("ref", abstract['ref_spans'], abstract['section'], sectionObject, datastore, refDict, refSectionDict);
+    addRefs("cite", abstract['cite_spans'], abstract['section'], sectionObject, datastore, refDict, refSectionDict);
+    bodyNum += 1
+
+    # body_text
+    
     for body in body_text:
         sectionName = None
         refSectionDict = {}
