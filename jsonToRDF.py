@@ -223,17 +223,18 @@ def handleFile(filename):
     refDict = {}
     refSectionDict = {}
     bodyNum = 1
-    abstract = datastore['abstract'][0]
-    sectionObject = Namespace(resourse+datastore["paper_id"]+"_")
-    g.add( (dice, ndice['hasAbstract'], sectionObject['Abstract']) )
-    s1 = sectionObject['Section'+str(bodyNum)]
-    g.add( (sectionObject['Abstract'], ndice.hasSection, s1) )
-    g.add( (s1, RDF.type, sdo.Section) )
-    g.add( (s1, bibtex.hasTitle, Literal(abstract['section'])) )
-    g.add( (s1, nif.isString, Literal(abstract['text'])) )
-    addRefs("ref", abstract['ref_spans'], abstract['section'], sectionObject, datastore, refDict, refSectionDict);
-    addRefs("cite", abstract['cite_spans'], abstract['section'], sectionObject, datastore, refDict, refSectionDict);
-    bodyNum += 1
+    if 'abstract' in datastore and datastore['abstract'] is not None and len(datastore['abstract']) != 0:
+        abstract = datastore['abstract'][0]
+        sectionObject = Namespace(resourse+datastore["paper_id"]+"_")
+        g.add( (dice, ndice['hasAbstract'], sectionObject['Abstract']) )
+        s1 = sectionObject['Section'+str(bodyNum)]
+        g.add( (sectionObject['Abstract'], ndice.hasSection, s1) )
+        g.add( (s1, RDF.type, sdo.Section) )
+        g.add( (s1, bibtex.hasTitle, Literal(abstract['section'])) )
+        g.add( (s1, nif.isString, Literal(abstract['text'])) )
+        addRefs("ref", abstract['ref_spans'], abstract['section'], sectionObject, datastore, refDict, refSectionDict);
+        addRefs("cite", abstract['cite_spans'], abstract['section'], sectionObject, datastore, refDict, refSectionDict);
+        bodyNum += 1
 
     # body_text
     
