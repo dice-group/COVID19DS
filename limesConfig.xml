@@ -26,23 +26,22 @@
 		<RESTRICTION>?x a foaf:Person</RESTRICTION>
 		<PROPERTY>foaf:firstName</PROPERTY>
 		<PROPERTY>foaf:lastName</PROPERTY>
+		<FUNCTION>concat(foaf:firstName, foaf:lastName, glue=" ") RENAME name</FUNCTION>
 		<TYPE>TURTLE</TYPE>
 	</SOURCE>
 
 
 	<TARGET>
 		<ID>covid1</ID>
-		<ENDPOINT>/home/user/Documents/Others/work/COVID19DS/corona.ttl</ENDPOINT>
+		<ENDPOINT>http://ma-graph.org/sparql</ENDPOINT>
 		<VAR>?y</VAR>
 		<PAGESIZE>-1</PAGESIZE>
-		<RESTRICTION>?y a foaf:Person</RESTRICTION>
-		<PROPERTY>foaf:firstName</PROPERTY>
-		<PROPERTY>foaf:lastName</PROPERTY>
-		<TYPE>TURTLE</TYPE>
+		<RESTRICTION>?y a &lt;http://ma-graph.org/class/Author&gt;</RESTRICTION>
+		<PROPERTY>foaf:name RENAME name</PROPERTY>
 	</TARGET>
 
 
-	<METRIC>AND(ExactMatch(x.foaf:firstName,y.foaf:firstName)|1.0,ExactMatch(x.foaf:lastName,y.foaf:lastName)|1.0)</METRIC>
+	<METRIC>ExactMatch(x.name,y.name)|0.6</METRIC>
 	<ACCEPTANCE>
 		<THRESHOLD>1.0</THRESHOLD>
 		<FILE>accepted.nt</FILE>
