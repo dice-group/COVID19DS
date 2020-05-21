@@ -4,6 +4,7 @@ import json
 import re
 import sys
 import os
+import csv
 
 g = Graph()
 resourse = "https://covid-19ds.data.dice-research.org/resource/"
@@ -24,6 +25,7 @@ def addAuthors(authors, subject):
         name = re.sub("[^A-Za-z]", "", (a['first'] + a['last']))  
         g.add( (subject, bibtex.hasAuthor, ndice[name]) )
         g.add( (ndice[name], RDF.type, FOAF.Person) )
+        g.add( (ndice[name], RDF.type, URIRef('http://ma-graph.org/class/Author')) )
         g.add( (ndice[name], FOAF.firstName, Literal(a['first'])) )
         g.add( (ndice[name], FOAF.lastName, Literal(a['last'])) )
         if len(a['middle']) != 0:
@@ -146,13 +148,13 @@ def handleFile(filename):
             datastore = json.load(f)
 
     sections = ['Abstract', 'Introduction', 'Background',
-     'Relatedwork', 'Preliminaries', 'Conclusion', 'Experiment', 'Discussion']
+     'Related work', 'Preliminaries', 'Conclusion', 'Experiment', 'Discussion']
     title = datastore["metadata"]["title"]
     authors = datastore["metadata"]["authors"]
     body_text = datastore["body_text"]
     bib_entries = datastore["bib_entries"]
 
-    dice = URIRef(resourse+datastore["paper_id"])
+    dice = URIRef(resourse+datastore["paper_id"]) # old
     linda = BNode()
 
     schema.author
@@ -172,40 +174,58 @@ def handleFile(filename):
     g.namespace_manager.bind("fabio", fabio)
     g.namespace_manager.bind("owl", OWL)
 
-    # sameAs linking
-    g.add( (dice, OWL.sameAs, URIRef("http://ns.inria.fr/covid19/"+datastore["paper_id"])) )
-    if 'PMC' in datastore['paper_id']:    
-        g.add( (dice, OWL.sameAs, URIRef("https://www.ncbi.nlm.nih.gov/pmc/articles/"+datastore["paper_id"])) )
-    if 'PMC' in datastore['paper_id']:
-        pmc_id = datastore['paper_id'][3:]
-        # g.add( (dice, OWL.sameAs, URIRef("http://pubannotation.org/docs/sourcedb/PMC/sourceid/"+pmc_id)) )
-    else:
-        g.add( (dice, OWL.sameAs, URIRef("http://pubannotation.org/docs/sourcedb/CORD-19/sourceid/"+datastore["paper_id"])) )
-        g.add( (dice, OWL.sameAs, URIRef("https://data.linkeddatafragments.org/covid19?object=http%3A%2F%2Fidlab.github.io%2Fcovid19%23"+datastore["paper_id"])) )
-        if sys.argv[2] == 'c':
-            g.add( (dice, OWL.sameAs, URIRef("https://fhircat.org/cord-19/fhir/Commercial/Composition/"+datastore["paper_id"]+".ttl")) )
-            g.add( (dice, RDFS.seeAlso, URIRef("https://fhircat.org/cord-19/fhir/Commercial/Composition/"+datastore["paper_id"]+".json")) )
-        if sys.argv[2] == 'n':
-            g.add( (dice, OWL.sameAs, URIRef("https://fhircat.org/cord-19/fhir/Non-commercial/Composition/"+datastore["paper_id"]+".ttl")) )
-            g.add( (dice, RDFS.seeAlso, URIRef("https://fhircat.org/cord-19/fhir/Non-commercial/Composition/"+datastore["paper_id"]+".json")) )
-        if sys.argv[2] == 'custom':
-            g.add( (dice, OWL.sameAs, URIRef("https://fhircat.org/cord-19/fhir/PMC/Composition/"+datastore["paper_id"]+".ttl")) )
-            g.add( (dice, RDFS.seeAlso, URIRef("https://fhircat.org/cord-19/fhir/PMC/Composition/"+datastore["paper_id"]+".json")) )
-    # the provenance
-    
+    # metadata
+    pmcid = None
+    sha = None
+    with open('metadata.csv', newline='') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            if row['sha'] == datastore["paper_id"] or row['pmcid'] == datastore['paper_id']:
+                pmcid = row["pmcid"]
+                sha = row["sha"]
+                dice = URIRef(resourse+pmcid)
+                for heading in row:
+                    # print(heading)
+                    if heading != 'abstract' and heading != 'authors' and heading != 'pdf_json_files' and heading != 'pmc_json_files' and len(row[heading]) != 0:
+                        metaprefix = ndice[heading]
+                        if heading == 'doi':
+                            metaprefix = bibo.doi
+                        if heading == 'journal':
+                            metaprefix = bibtex.hasJournal
+                        if heading == 'license':
+                            metaprefix = DCTERMS.license
+                        if heading == 'title':
+                            metaprefix = DCTERMS.title
+                        if heading == 'pubmed_id':
+                            metaprefix = bibo.pmid
+                        if heading == 'pmcid':
+                            metaprefix = fabio.hasPubMedCentralId
+                        if heading == 'sha':
+                            metaprefix = FOAF.sha1
+                        if heading == 'url':
+                            metaprefix = schema.url
+                            
+                        g.add( (dice, metaprefix, Literal(row[heading])) )
 
-    if sys.argv[2] == 'n':
-        g.add( (dice, prov.hadPrimarySource, ndice.nonCommercialUseDataset) )
-        g.add( (ndice.nonCommercialUseDataset, RDF.type, prov.Entity) )
-        g.add( (ndice.nonCommercialUseDataset, prov.wasDerivedFrom, Literal('https://ai2-semanticscholar-cord-19.s3-us-west-2.amazonaws.com/2020-03-20/noncomm_use_subset.tar.gz')) )
-    if sys.argv[2] == 'c':
-        g.add( (dice, prov.hadPrimarySource, ndice.commercialUseDataset) )
-        g.add( (ndice.commercialUseDataset, RDF.type, prov.Entity) )
-        g.add( (ndice.commercialUseDataset, prov.wasDerivedFrom, Literal('https://ai2-semanticscholar-cord-19.s3-us-west-2.amazonaws.com/2020-03-20/comm_use_subset.tar.gz')) )
-    if sys.argv[2] == 'custom':
-        g.add( (dice, prov.hadPrimarySource, ndice.customLicenseDataset) )
-        g.add( (ndice.customLicenseDataset, RDF.type, prov.Entity) )
-        g.add( (ndice.customLicenseDataset, prov.wasDerivedFrom, Literal('https://ai2-semanticscholar-cord-19.s3-us-west-2.amazonaws.com/2020-04-10/custom_license.tar.gz')) )
+                        
+
+    # sameAs linking
+    if pmcid:
+        g.add( (dice, OWL.sameAs, URIRef("http://ns.inria.fr/covid19/"+pmcid)) )
+        g.add( (dice, OWL.sameAs, URIRef("https://www.ncbi.nlm.nih.gov/pmc/articles/"+pmcid)) )
+    if sha:
+        g.add( (dice, OWL.sameAs, URIRef("http://ns.inria.fr/covid19/"+sha)) )    
+        g.add( (dice, OWL.sameAs, URIRef("http://pubannotation.org/docs/sourcedb/CORD-19/sourceid/"+sha)) )
+        g.add( (dice, OWL.sameAs, URIRef("https://data.linkeddatafragments.org/covid19?object=http%3A%2F%2Fidlab.github.io%2Fcovid19%23"+sha)) )
+        g.add( (dice, OWL.sameAs, URIRef("https://fhircat.org/cord-19/fhir/PMC/Composition/"+sha+".ttl")) )
+        g.add( (dice, RDFS.seeAlso, URIRef("https://fhircat.org/cord-19/fhir/PMC/Composition/"+sha+".json")) )
+
+
+    # the provenance
+    g.add( (dice, prov.hadPrimarySource, ndice.Cord19Dataset) )
+    g.add( (ndice.Cord19Dataset, RDF.type, prov.Entity) )
+    g.add( (ndice.Cord19Dataset, prov.generatedAtTime, Literal("2020-05-21T02:52:02Z",datatype=XSD.dateTime)) )
+    g.add( (ndice.Cord19Dataset, prov.wasDerivedFrom, Literal("https://ai2-semanticscholar-cord-19.s3-us-west-2.amazonaws.com/latest/document_parses.tar.gz")) )
   
     #
     if title:
@@ -214,8 +234,6 @@ def handleFile(filename):
     g.add( (dice, RDF.type, fabio.ResearchPaper) )
     g.add( (dice, RDF.type, bibo.AcademicArticle) )
     g.add( (dice, RDF.type, schema.ScholarlyArticle) )
-    g.add( (dice, DCTERMS.license, URIRef('https://www.gnu.org/licenses/gpl-3.0.html')) )
-    g.add( (URIRef('https://www.gnu.org/licenses/gpl-3.0.html'), RDFS.label, Literal('GNU Affero General Public License v3.0')) )
     addAuthors(authors, dice)
 
     # abstract
@@ -223,9 +241,14 @@ def handleFile(filename):
     refDict = {}
     refSectionDict = {}
     bodyNum = 1
+    if pmcid:
+        sectionObject = Namespace(resourse+pmcid+"_")
+    else:
+        sectionObject = Namespace(resourse+datastore["paper_id"]+"_")
+
     if 'abstract' in datastore and datastore['abstract'] is not None and len(datastore['abstract']) != 0:
         abstract = datastore['abstract'][0]
-        sectionObject = Namespace(resourse+datastore["paper_id"]+"_")
+        
         g.add( (dice, ndice['hasAbstract'], sectionObject['Abstract']) )
         s1 = sectionObject['Section'+str(bodyNum)]
         g.add( (sectionObject['Abstract'], ndice.hasSection, s1) )
@@ -247,7 +270,6 @@ def handleFile(filename):
         if sectionName == None:
             sectionName = 'Body'              
         section = 'has' + sectionName
-        sectionObject = Namespace(resourse+datastore["paper_id"]+"_")
         g.add( (dice, ndice[section], sectionObject[sectionName]) )
         text = body['text']
         ref_spans = body['ref_spans']

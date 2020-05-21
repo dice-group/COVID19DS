@@ -3,15 +3,11 @@ The RDF file generation is based on papers related to the COVID-19 and coronavir
 
 To run the generation of the dataset, the following command is used:
 ```
-python3 jsonToRDF.py folderName/ option
+python3 jsonToRDF.py folderName/
 ```
 
 folderName/ - the name of the folder that contains the subset of papers. Each paper is represented as a single JSON object.
 
-options:  
-c - commercial use subset  
-n - non-commercial use subset  
-custom - custom license subset  
 
 ## Namespaces
 
