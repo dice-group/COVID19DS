@@ -8,6 +8,7 @@ import csv
 import pandas as pd
 from collections import OrderedDict, defaultdict
 from multiprocessing import Pool
+from functools import partial
 
 g = Graph()
 ontology = "https://covid-19ds.data.dice-research.org/ontology/"
@@ -150,8 +151,9 @@ def addRefs(typeOfSpans, ref_spans, sectionName, sectionObject, sectionOntology,
                 g.add( (refName2, bibtex.hasTitle,  Literal(refTitle)) )
             
 
-def handleFile(filename):
-    filename = dirname1+"/"+filename
+def handleFile(filename, dirname): 
+    # filename = dirname+"/"+filename
+    filename = filename+"/"+dirname
     print(filename)
 
     if filename:
@@ -204,6 +206,9 @@ def handleFile(filename):
         if row['sha'] == datastore["paper_id"] or row['pmcid'] == datastore['paper_id']:
             pmcid = str(row["pmcid"]).lower()
             sha = str(row["sha"])
+            if ';' in sha:
+                sha = sha.split(';')[0]
+                # print(sha)
             dice = URIRef(resourse+pmcid)
             for heading in row:
                 heading = str(heading)
@@ -319,8 +324,7 @@ def handleFile(filename):
 
         addRefs("ref", ref_spans, sectionName, sectionObject, sectionOntology, datastore, refDict, refSectionDict);
         addRefs("cite", body['cite_spans'], sectionName, sectionObject, sectionOntology, datastore, refDict, refSectionDict);
-        
-    return g
+    return g    
 
 reader = pd.read_csv('metadata.csv',
     names=['cord_uid','sha','source_x','title'
@@ -348,23 +352,29 @@ dirname = sys.argv[1]
 dirname1 = dirname+"pdf_json"
 num = 0
 p = Pool(4)
-result = p.map(handleFile, (os.listdir(dirname1))) 
+funct = partial(handleFile, dirname1)
+results1 = p.map(funct, (os.listdir(dirname1))) 
+
+dirname2 = dirname+"pmc_json"
+funct = partial(handleFile, dirname2)
+results2 = p.map(funct, (os.listdir(dirname2)))
 
 # graph = Graph()
-# for gr in result:
+# for gr in result1:
+#     graph += gr
+# for gr in result2:
 #     graph += gr
 
-# dirname2 = dirname+"pmc_json"
-# p2 = Pool(4)
-# p2.map(handleFile, (os.listdir(dirname2))) 
-
 # serilizedRDF = graph.serialize(format='turtle')
-# f = open("corona_parallel_pdf.ttl", "w")
+# f = open("corona_parallel_all.ttl", "w")
 # f.write(serilizedRDF.decode("utf-8"))
 # f.close()
 
 f = open("corona.ttl", "w")
-for gr in result:
+for gr in result1:
     serilizedRDF = gr.serialize(format='turtle') 
-    f.write(serilizedRDF.decode("utf-8")) 
+    f.write(serilizedRDF.decode("utf-8"))
+for gr in result2:
+    serilizedRDF = gr.serialize(format='turtle') 
+    f.write(serilizedRDF.decode("utf-8"))  
 f.close()

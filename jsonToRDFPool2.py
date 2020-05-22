@@ -151,7 +151,7 @@ def addRefs(typeOfSpans, ref_spans, sectionName, sectionObject, sectionOntology,
             
 
 def handleFile(filename):
-    filename = dirname1+"/"+filename
+    filename = dirname2+"/"+filename
     print(filename)
 
     if filename:
@@ -204,6 +204,9 @@ def handleFile(filename):
         if row['sha'] == datastore["paper_id"] or row['pmcid'] == datastore['paper_id']:
             pmcid = str(row["pmcid"]).lower()
             sha = str(row["sha"])
+            if ';' in sha:
+                sha = sha.split(';')[0]
+                # print(sha)
             dice = URIRef(resourse+pmcid)
             for heading in row:
                 heading = str(heading)
@@ -345,24 +348,23 @@ def isnan(value):
 dirname = sys.argv[1]
 # handleFile(dirname)
 
-dirname1 = dirname+"pdf_json"
+# dirname1 = dirname+"pdf_json"
 num = 0
-p = Pool(4)
-result = p.map(handleFile, (os.listdir(dirname1))) 
+# p = Pool(4)
+# p.map(handleFile, (os.listdir(dirname1))) 
+
+dirname2 = dirname+"pmc_json"
+p2 = Pool(4)
+result = p2.map(handleFile, (os.listdir(dirname2)))
 
 # graph = Graph()
 # for gr in result:
 #     graph += gr
 
-# dirname2 = dirname+"pmc_json"
-# p2 = Pool(4)
-# p2.map(handleFile, (os.listdir(dirname2))) 
-
 # serilizedRDF = graph.serialize(format='turtle')
-# f = open("corona_parallel_pdf.ttl", "w")
+# f = open("corona_parallel_pmc.ttl", "w")
 # f.write(serilizedRDF.decode("utf-8"))
 # f.close()
-
 f = open("corona.ttl", "w")
 for gr in result:
     serilizedRDF = gr.serialize(format='turtle') 
