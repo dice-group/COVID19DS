@@ -323,7 +323,14 @@ def handleFile(filename):
         addRefs("ref", ref_spans, sectionName, sectionObject, sectionOntology, datastore, refDict, refSectionDict);
         addRefs("cite", body['cite_spans'], sectionName, sectionObject, sectionOntology, datastore, refDict, refSectionDict);
         
-    return g
+    import os
+    if not os.path.exists('ttls'):
+        os.makedirs('ttls')
+    f = open('ttls/'+datastore['paper_id']+".ttl", "w")
+    serilizedRDF = g.serialize(format='turtle') 
+    f.write(serilizedRDF.decode("utf-8")) 
+    f.close()
+    # return g
 
 reader = pd.read_csv('metadata.csv',
     names=['cord_uid','sha','source_x','title'
@@ -355,7 +362,8 @@ num = 0
 
 dirname2 = dirname+"pmc_json"
 p2 = Pool(4)
-result = p2.map(handleFile, (os.listdir(dirname2)))
+# result = 
+p2.map(handleFile, (os.listdir(dirname2)))
 
 # graph = Graph()
 # for gr in result:
@@ -365,8 +373,9 @@ result = p2.map(handleFile, (os.listdir(dirname2)))
 # f = open("corona_parallel_pmc.ttl", "w")
 # f.write(serilizedRDF.decode("utf-8"))
 # f.close()
-f = open("corona.ttl", "w")
-for gr in result:
-    serilizedRDF = gr.serialize(format='turtle') 
-    f.write(serilizedRDF.decode("utf-8")) 
-f.close()
+
+# f = open("corona.ttl", "w")
+# for gr in result:
+#     serilizedRDF = gr.serialize(format='turtle') 
+#     f.write(serilizedRDF.decode("utf-8")) 
+# f.close()
