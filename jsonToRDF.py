@@ -5,6 +5,8 @@ import re
 import sys
 import os
 import csv
+import pandas as pd
+from collections import OrderedDict, defaultdict
 
 g = Graph()
 ontology = "https://covid-19ds.data.dice-research.org/ontology/"
@@ -26,7 +28,8 @@ ndice = Namespace("https://covid-19ds.data.dice-research.org/resource/") #cvdr
 def addAuthors(authors, subject):
     for a in authors:
         name = re.sub("[^A-Za-z]", "", (a['first'].lower() + a['last']))
-        name = name[0].lower()+name[1:]  
+        if name:
+            name = name[0].lower()+name[1:]  
         g.add( (subject, bibtex.hasAuthor, ndice[name]) )
         g.add( (ndice[name], RDF.type, FOAF.Person) )
         g.add( (ndice[name], RDF.type, URIRef('http://ma-graph.org/class/Author')) )
@@ -182,44 +185,54 @@ def handleFile(filename):
     # metadata
     pmcid = None
     sha = None
-    with open('metadata.csv', newline='') as csvfile:
-        reader = csv.DictReader(csvfile)
-        for row in reader:
-            if row['sha'] == datastore["paper_id"] or row['pmcid'] == datastore['paper_id']:
-                pmcid = row["pmcid"].lower()
-                sha = row["sha"]
-                dice = URIRef(resourse+pmcid)
-                for heading in row:
-                    # print(heading)
-                    if heading != 'abstract' and heading != 'authors' and heading != 'pdf_json_files' and heading != 'pmc_json_files' and len(row[heading]) != 0:
-                        
-                        if '_' in heading:
-                            pos = heading.find('_')
-                            capitalLetter = heading[pos+1].upper()
-                            h = heading[0:pos]+capitalLetter+heading[pos+2:]
-                            # print(h)
+    # with open('test.csv', newline='') as csvfile:
+    #     reader = csv.DictReader(csvfile)
+    # reader = pd.read_csv('metadata.csv',
+    #     dtype={'cord_uid':str,'sha':str,'source_x':str,'title':str
+    #     ,'doi':str,'pmcid':str,'pubmed_id':str,'license':str,
+    #     'abstract':str,'publish_time':str,'authors':str,'journal':str,
+    #     'mag_id':str,'who_covidence_id':str,'arxiv_id':str,
+    #     'pdf_json_files':str,'pmc_json_files':str,'url':str,'s2_id':str}).to_dict('records', into=OrderedDict)
+    # # pd.read_csv('metadata.csv', sep=',', index_col=0, squeeze=True, header=None).to_dict()
 
-                        metapredicate = cvdo[h]
-                        if heading == 'doi':
-                            metapredicate = bibo.doi
-                        if heading == 'journal':
-                            metapredicate = bibtex.hasJournal
-                        if heading == 'license':
-                            metapredicate = DCTERMS.license
-                        if heading == 'title':
-                            metapredicate = DCTERMS.title
-                        if heading == 'pubmed_id':
-                            metapredicate = bibo.pmid
-                        if heading == 'pmcid':
-                            metapredicate = fabio.hasPubMedCentralId
-                        if heading == 'sha':
-                            metapredicate = FOAF.sha1
-                        if heading == 'url':
-                            metapredicate = schema.url
-                            
+    for row in reader:
+        # print(row['sha'])
+        if row['sha'] == datastore["paper_id"] or row['pmcid'] == datastore['paper_id']:
+            pmcid = row["pmcid"].lower()
+            sha = row["sha"]
+            dice = URIRef(resourse+pmcid)
+            for heading in row:
+                heading = str(heading)
+                if heading != 'abstract' and heading != 'authors' and heading != 'pdf_json_files' and heading != 'pmc_json_files' and len(heading) != 0:
+                    
+                    if '_' in heading:
+                        pos = heading.find('_')
+                        capitalLetter = heading[pos+1].upper()
+                        h = heading[0:pos]+capitalLetter+heading[pos+2:]
+                        # print(h)
+
+                    metapredicate = cvdo[h]
+                    if heading == 'doi':
+                        metapredicate = bibo.doi
+                    if heading == 'journal':
+                        metapredicate = bibtex.hasJournal
+                    if heading == 'license':
+                        metapredicate = DCTERMS.license
+                    if heading == 'title':
+                        metapredicate = DCTERMS.title
+                    if heading == 'pubmed_id':
+                        metapredicate = bibo.pmid
+                    if heading == 'pmcid':
+                        metapredicate = fabio.hasPubMedCentralId
+                    if heading == 'sha':
+                        metapredicate = FOAF.sha1
+                    if heading == 'url':
+                        metapredicate = schema.url
+                    
+                    if not isnan(row[heading]):   
                         g.add( (dice, metapredicate, Literal(row[heading])) )
 
-                        
+    # print('Csv has finished')                    
 
     # sameAs linking
     if pmcid:
@@ -304,18 +317,44 @@ def handleFile(filename):
         addRefs("cite", body['cite_spans'], sectionName, sectionObject, sectionOntology, datastore, refDict, refSectionDict);
         
 
+reader = pd.read_csv('metadata.csv',
+    names=['cord_uid','sha','source_x','title'
+    ,'doi','pmcid','pubmed_id','license',
+    'abstract','publish_time','authors','journal',
+    'mag_id','who_covidence_id','arxiv_id',
+    'pdf_json_files','pmc_json_files','url','s2_id'],
+    dtype={'cord_uid':str,'sha':str,'source_x':str,'title':str
+    ,'doi':str,'pmcid':str,'pubmed_id':str,'license':str,
+    'abstract':str,'publish_time':str,'authors':str,'journal':str,
+    'mag_id':str,'who_covidence_id':str,'arxiv_id':str,
+    'pdf_json_files':str,'pmc_json_files':str,'url':str,'s2_id':str}).to_dict('records', into=OrderedDict)
+
+
+def isnan(value):
+    try:
+        import math
+        return math.isnan(float(value))
+    except:
+        return False
+
 dirname = sys.argv[1]
-handleFile(dirname)
+# handleFile(dirname)
 
-# dirname1 = dirname+"pdf_json"
-# print(dirname1)
-# for filename in os.listdir(dirname1):  
-#     handleFile(dirname1+"/"+filename)
+dirname1 = dirname+"pdf_json"
+print(dirname1)
+num = 0
+for filename in os.listdir(dirname1):
+    print(str(num)+"/"+str(len(os.listdir(dirname1))))  
+    handleFile(dirname1+"/"+filename)
+    num += 1
 
-# dirname2 = dirname+"pmc_json"
-# print(dirname2)
-# for filename in os.listdir(dirname2):  
-#     handleFile(dirname2+"/"+filename)    
+dirname2 = dirname+"pmc_json"
+print(dirname2)
+num = 0
+for filename in os.listdir(dirname2): 
+    print(str(num)+"/"+str(len(os.listdir(dirname2))))    
+    handleFile(dirname2+"/"+filename)
+    num += 1   
 
 serilizedRDF = g.serialize(format='turtle')
 f = open("corona.ttl", "w")
