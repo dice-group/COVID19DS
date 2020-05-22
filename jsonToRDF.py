@@ -7,8 +7,9 @@ import os
 import csv
 
 g = Graph()
+ontology = "https://covid-19ds.data.dice-research.org/ontology/"
 resourse = "https://covid-19ds.data.dice-research.org/resource/"
-ndice = Namespace(resourse)
+# ndice = Namespace(resourse)
 schema = Namespace("http://schema.org/")
 vcard = Namespace("http://www.w3.org/2006/vcard/ns#")
 bibtex = Namespace("http://purl.org/net/nknouf/ns/bibtex#") 
@@ -19,37 +20,40 @@ its = Namespace("http://www.w3.org/2005/11/its/rdf#")
 sdo = Namespace("http://salt.semanticauthoring.org/ontologies/sdo#")
 bibo = Namespace("http://purl.org/ontology/bibo/")
 fabio = Namespace("http://purl.org/spar/fabio/")
+cvdo = Namespace("https://covid-19ds.data.dice-research.org/ontology/")
+ndice = Namespace("https://covid-19ds.data.dice-research.org/resource/") #cvdr
 
 def addAuthors(authors, subject):
     for a in authors:
-        name = re.sub("[^A-Za-z]", "", (a['first'] + a['last']))  
+        name = re.sub("[^A-Za-z]", "", (a['first'].lower() + a['last']))
+        name = name[0].lower()+name[1:]  
         g.add( (subject, bibtex.hasAuthor, ndice[name]) )
         g.add( (ndice[name], RDF.type, FOAF.Person) )
         g.add( (ndice[name], RDF.type, URIRef('http://ma-graph.org/class/Author')) )
         g.add( (ndice[name], FOAF.firstName, Literal(a['first'])) )
         g.add( (ndice[name], FOAF.lastName, Literal(a['last'])) )
         if len(a['middle']) != 0:
-            g.add( (ndice[name], ndice.middleName, Literal(a['middle'][0])) )
+            g.add( (ndice[name], cvdo.middleName, Literal(a['middle'][0])) )
         if len(a['suffix']) != 0:
-            g.add( (ndice[name], ndice.hasSuffix, Literal(a['suffix'])) )
+            g.add( (ndice[name], cvdo.hasSuffix, Literal(a['suffix'])) )
         if 'email' in a and a['email'] is not None and len(a['email']) != 0:
             g.add( (ndice[name], FOAF.mbox, Literal(a['email'])) )
         if 'affiliation' in a and len(a['affiliation']) != 0:
             aff = a['affiliation']
             if len(aff['laboratory']) != 0:
-                g.add( (ndice[name], ndice.hasLab, Literal(aff['laboratory'])) )
+                g.add( (ndice[name], cvdo.hasLab, Literal(aff['laboratory'])) )
             if len(aff['institution']) != 0:
                 g.add( (ndice[name], bibtex.hasInstitution, Literal(aff['institution'])) )
             if len(aff['location']) != 0:
                 location = aff['location']
                 if 'settlement' in location and len(location['settlement']) != 0:    
-                    g.add( (ndice[name], ndice.hasSettlement, Literal(location['settlement'])) )
+                    g.add( (ndice[name], cvdo.hasSettlement, Literal(location['settlement'])) )
                 if 'region' in location and len(location['region']) != 0:    
-                    g.add( (ndice[name], ndice.hasRegion, Literal(location['region'])) )
+                    g.add( (ndice[name], cvdo.hasRegion, Literal(location['region'])) )
                 if 'country' in location and len(location['country']) != 0:    
                     g.add( (ndice[name], vcard['country-name'], Literal(location['country'])) )
 
-def addBibEntries(bib_entries, sectionObject, datastore, link, bibId):
+def addBibEntries(bib_entries, sectionObject, sectionOntology, datastore, link, bibId):
     curLink = str(link).strip()
     if 'BIBREF'+curLink in bib_entries:
 
@@ -75,7 +79,7 @@ def addBibEntries(bib_entries, sectionObject, datastore, link, bibId):
         bibAuthors = bib_entry['authors']
         addAuthors(bibAuthors, sectionObject[bibId])
 
-def addRefs(typeOfSpans, ref_spans, sectionName, sectionObject, datastore, refDict, refSectionDict):
+def addRefs(typeOfSpans, ref_spans, sectionName, sectionObject, sectionOntology, datastore, refDict, refSectionDict):
     for ref_span in ref_spans:
         # print(ref_span)
         if 'text' in ref_span:
@@ -93,7 +97,7 @@ def addRefs(typeOfSpans, ref_spans, sectionName, sectionObject, datastore, refDi
             numRefLabel = refSectionDict[bibId]
             bibId += '_' + str(numRefLabel)
 
-            addBibEntries(datastore['bib_entries'], sectionObject, datastore, ref_span_label, bibId)
+            addBibEntries(datastore['bib_entries'], sectionObject, sectionOntology, datastore, ref_span_label, bibId)
             refName = sectionObject[sectionName+'_'+bibId]
             g.add( (refName, RDF.type, nif.Phrase) )
             g.add( (refName, nif.anchorOf, Literal(ref_span_label)) )
@@ -148,7 +152,7 @@ def handleFile(filename):
             datastore = json.load(f)
 
     sections = ['Abstract', 'Introduction', 'Background',
-     'Related work', 'Preliminaries', 'Conclusion', 'Experiment', 'Discussion']
+     'RelatedWork', 'Preliminaries', 'Conclusion', 'Experiment', 'Discussion']
     title = datastore["metadata"]["title"]
     authors = datastore["metadata"]["authors"]
     body_text = datastore["body_text"]
@@ -159,7 +163,8 @@ def handleFile(filename):
 
     schema.author
 
-    g.namespace_manager.bind("covid", ndice)
+    g.namespace_manager.bind("cvdr", ndice)
+    g.namespace_manager.bind("cvdo", cvdo)
     g.namespace_manager.bind("schema", schema)
     g.namespace_manager.bind("dcterms", DCTERMS)
     g.namespace_manager.bind("foaf", FOAF)
@@ -181,31 +186,38 @@ def handleFile(filename):
         reader = csv.DictReader(csvfile)
         for row in reader:
             if row['sha'] == datastore["paper_id"] or row['pmcid'] == datastore['paper_id']:
-                pmcid = row["pmcid"]
+                pmcid = row["pmcid"].lower()
                 sha = row["sha"]
                 dice = URIRef(resourse+pmcid)
                 for heading in row:
                     # print(heading)
                     if heading != 'abstract' and heading != 'authors' and heading != 'pdf_json_files' and heading != 'pmc_json_files' and len(row[heading]) != 0:
-                        metaprefix = ndice[heading]
+                        
+                        if '_' in heading:
+                            pos = heading.find('_')
+                            capitalLetter = heading[pos+1].upper()
+                            h = heading[0:pos]+capitalLetter+heading[pos+2:]
+                            # print(h)
+
+                        metapredicate = cvdo[h]
                         if heading == 'doi':
-                            metaprefix = bibo.doi
+                            metapredicate = bibo.doi
                         if heading == 'journal':
-                            metaprefix = bibtex.hasJournal
+                            metapredicate = bibtex.hasJournal
                         if heading == 'license':
-                            metaprefix = DCTERMS.license
+                            metapredicate = DCTERMS.license
                         if heading == 'title':
-                            metaprefix = DCTERMS.title
+                            metapredicate = DCTERMS.title
                         if heading == 'pubmed_id':
-                            metaprefix = bibo.pmid
+                            metapredicate = bibo.pmid
                         if heading == 'pmcid':
-                            metaprefix = fabio.hasPubMedCentralId
+                            metapredicate = fabio.hasPubMedCentralId
                         if heading == 'sha':
-                            metaprefix = FOAF.sha1
+                            metapredicate = FOAF.sha1
                         if heading == 'url':
-                            metaprefix = schema.url
+                            metapredicate = schema.url
                             
-                        g.add( (dice, metaprefix, Literal(row[heading])) )
+                        g.add( (dice, metapredicate, Literal(row[heading])) )
 
                         
 
@@ -222,10 +234,10 @@ def handleFile(filename):
 
 
     # the provenance
-    g.add( (dice, prov.hadPrimarySource, ndice.Cord19Dataset) )
-    g.add( (ndice.Cord19Dataset, RDF.type, prov.Entity) )
-    g.add( (ndice.Cord19Dataset, prov.generatedAtTime, Literal("2020-05-21T02:52:02Z",datatype=XSD.dateTime)) )
-    g.add( (ndice.Cord19Dataset, prov.wasDerivedFrom, Literal("https://ai2-semanticscholar-cord-19.s3-us-west-2.amazonaws.com/latest/document_parses.tar.gz")) )
+    g.add( (dice, prov.hadPrimarySource, ndice.cord19Dataset) )
+    g.add( (ndice.cord19Dataset, RDF.type, prov.Entity) )
+    g.add( (ndice.cord19Dataset, prov.generatedAtTime, Literal("2020-05-21T02:52:02Z",datatype=XSD.dateTime)) )
+    g.add( (ndice.cord19Dataset, prov.wasDerivedFrom, Literal("https://ai2-semanticscholar-cord-19.s3-us-west-2.amazonaws.com/latest/document_parses.tar.gz")) )
   
     #
     if title:
@@ -241,22 +253,26 @@ def handleFile(filename):
     refDict = {}
     refSectionDict = {}
     bodyNum = 1
+    
     if pmcid:
         sectionObject = Namespace(resourse+pmcid+"_")
+        sectionOntology = Namespace(ontology+pmcid+"_")
     else:
         sectionObject = Namespace(resourse+datastore["paper_id"]+"_")
+        sectionOntology = Namespace(ontology+datastore["paper_id"]+"_")
 
     if 'abstract' in datastore and datastore['abstract'] is not None and len(datastore['abstract']) != 0:
         abstract = datastore['abstract'][0]
         
-        g.add( (dice, ndice['hasAbstract'], sectionObject['Abstract']) )
+        g.add( (dice, cvdo['hasAbstract'], sectionObject['Abstract']) )
         s1 = sectionObject['Section'+str(bodyNum)]
-        g.add( (sectionObject['Abstract'], ndice.hasSection, s1) )
+        g.add( (sectionObject['Abstract'], cvdo.hasSection, s1) )
+        g.add( (sectionObject['Abstract'], RDF.type, cvdo['PaperAbstract']) )
         g.add( (s1, RDF.type, sdo.Section) )
         g.add( (s1, bibtex.hasTitle, Literal(abstract['section'])) )
         g.add( (s1, nif.isString, Literal(abstract['text'])) )
-        addRefs("ref", abstract['ref_spans'], abstract['section'], sectionObject, datastore, refDict, refSectionDict);
-        addRefs("cite", abstract['cite_spans'], abstract['section'], sectionObject, datastore, refDict, refSectionDict);
+        addRefs("ref", abstract['ref_spans'], abstract['section'], sectionObject, sectionOntology, datastore, refDict, refSectionDict);
+        addRefs("cite", abstract['cite_spans'], abstract['section'], sectionObject, sectionOntology, datastore, refDict, refSectionDict);
         bodyNum += 1
 
     # body_text
@@ -270,34 +286,36 @@ def handleFile(filename):
         if sectionName == None:
             sectionName = 'Body'              
         section = 'has' + sectionName
-        g.add( (dice, ndice[section], sectionObject[sectionName]) )
+        g.add( (dice, cvdo[section], sectionObject[sectionName]) )
         text = body['text']
         ref_spans = body['ref_spans']
 
         s1 = sectionObject['Section'+str(bodyNum)]
-        g.add( (sectionObject[sectionName], ndice.hasSection, s1) )
+        g.add( (sectionObject[sectionName], cvdo.hasSection, s1) )
+        sectionClass = 'Paper' + sectionName
+        g.add( (sectionObject[sectionName], RDF.type, cvdo[sectionClass]) )
         g.add( (s1, RDF.type, sdo.Section) )
         g.add( (s1, bibtex.hasTitle, Literal(body['section'])) )
         g.add( (s1, nif.isString, Literal(text)) )
         sectionName = 'Section'+str(bodyNum)
         bodyNum += 1
 
-        addRefs("ref", ref_spans, sectionName, sectionObject, datastore, refDict, refSectionDict);
-        addRefs("cite", body['cite_spans'], sectionName, sectionObject, datastore, refDict, refSectionDict);
+        addRefs("ref", ref_spans, sectionName, sectionObject, sectionOntology, datastore, refDict, refSectionDict);
+        addRefs("cite", body['cite_spans'], sectionName, sectionObject, sectionOntology, datastore, refDict, refSectionDict);
         
 
 dirname = sys.argv[1]
-# handleFile(dirname)
+handleFile(dirname)
 
-dirname1 = dirname+"pdf_json"
-print(dirname1)
-for filename in os.listdir(dirname1):  
-    handleFile(dirname1+"/"+filename)
+# dirname1 = dirname+"pdf_json"
+# print(dirname1)
+# for filename in os.listdir(dirname1):  
+#     handleFile(dirname1+"/"+filename)
 
-dirname2 = dirname+"pmc_json"
-print(dirname2)
-for filename in os.listdir(dirname2):  
-    handleFile(dirname2+"/"+filename)    
+# dirname2 = dirname+"pmc_json"
+# print(dirname2)
+# for filename in os.listdir(dirname2):  
+#     handleFile(dirname2+"/"+filename)    
 
 serilizedRDF = g.serialize(format='turtle')
 f = open("corona.ttl", "w")
