@@ -198,8 +198,8 @@ def handleFile(filename):
     for row in reader:
         # print(row['sha'])
         if row['sha'] == datastore["paper_id"] or row['pmcid'] == datastore['paper_id']:
-            pmcid = row["pmcid"].lower()
-            sha = row["sha"]
+            pmcid = str(row["pmcid"]).lower()
+            sha = str(row["sha"])
             dice = URIRef(resourse+pmcid)
             for heading in row:
                 heading = str(heading)
