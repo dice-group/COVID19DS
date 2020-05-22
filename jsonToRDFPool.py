@@ -202,7 +202,7 @@ def handleFile(filename):
     for row in reader:
         # print(row['sha'])
         if row['sha'] == datastore["paper_id"] or row['pmcid'] == datastore['paper_id']:
-            pmcid = str(row["pmcid"].lower())
+            pmcid = str(row["pmcid"]).lower()
             sha = str(row["sha"])
             dice = URIRef(resourse+pmcid)
             for heading in row:
@@ -346,13 +346,13 @@ dirname = sys.argv[1]
 
 dirname1 = dirname+"pdf_json"
 num = 0
-p = Pool(3)
+p = Pool(4)
 p.map(handleFile, (os.listdir(dirname1))) 
 
 dirname2 = dirname+"pmc_json"
 p.map(handleFile, (os.listdir(dirname2))) 
 
 serilizedRDF = g.serialize(format='turtle')
-f = open("corona.ttl", "w")
+f = open("corona_parallel.ttl", "w")
 f.write(serilizedRDF.decode("utf-8"))
 f.close()
