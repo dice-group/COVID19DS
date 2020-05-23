@@ -200,6 +200,8 @@ def handleFile(filename):
         if row['sha'] == datastore["paper_id"] or row['pmcid'] == datastore['paper_id']:
             pmcid = str(row["pmcid"]).lower()
             sha = str(row["sha"])
+            if ';' in sha:
+                sha = sha.split(';')[0]
             dice = URIRef(resourse+pmcid)
             for heading in row:
                 heading = str(heading)
@@ -357,6 +359,6 @@ for filename in os.listdir(dirname2):
     num += 1   
 
 serilizedRDF = g.serialize(format='turtle')
-f = open("corona.ttl", "w")
+f = open("corona_lis.ttl", "w")
 f.write(serilizedRDF.decode("utf-8"))
 f.close()
