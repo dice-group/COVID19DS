@@ -39,7 +39,7 @@ def addAuthors(authors, subject):
             g.add( (ndice[name], cvdo.middleName, Literal(a['middle'][0],datatype=XSD.string)) )
         if len(a['suffix']) != 0:
             g.add( (ndice[name], cvdo.hasSuffix, Literal(a['suffix'],datatype=XSD.string)) )
-        if 'email' in a and a['email'] is not None and len(a['email'],datatype=XSD.string) != 0:
+        if 'email' in a and a['email'] is not None and len(a['email']) != 0:
             g.add( (ndice[name], FOAF.mbox, Literal(a['email'],datatype=XSD.string)) )
         if 'affiliation' in a and len(a['affiliation']) != 0:
             aff = a['affiliation']
