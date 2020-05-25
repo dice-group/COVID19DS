@@ -237,10 +237,15 @@ def handleFile(filename):
                         metapredicate = DCTERMS.issued
                         metaobject = Literal(row[heading],datatype=XSD.date)
                     if heading == 'url':
+                        urls = str(row[heading])
+                        if ';' in urls:
+                            urls = urls.split(';')
                         metapredicate = schema.url
-                        metaobject = URIRef(row[heading])
+                        for u in urls:
+                            metaobject = URIRef(u.strip())
+                            g.add( (dice, metapredicate, metaobject) )
                     
-                    if not isnan(row[heading]):   
+                    if not isnan(row[heading]) and heading != 'url':   
                         g.add( (dice, metapredicate, metaobject) )
 
     # print('Csv has finished')                    
