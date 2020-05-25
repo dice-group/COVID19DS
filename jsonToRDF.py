@@ -197,12 +197,17 @@ def handleFile(filename):
 
     for row in reader:
         # print(row['sha'])
-        if row['sha'] == datastore["paper_id"] or row['pmcid'] == datastore['paper_id']:
-            pmcid = str(row["pmcid"]).lower()
-            sha = str(row["sha"])
-            if ';' in sha:
-                sha = sha.split(';')[0]
-            dice = URIRef(resourse+pmcid)
+        sha = str(row["sha"])
+        if ';' in sha:
+            shas = sha.split(';')
+            for s in shas:
+                if datastore["paper_id"] == s.strip():
+                    sha = s.strip()
+
+        if sha == datastore["paper_id"] or row['pmcid'] == datastore['paper_id']:
+            if len(str(row["pmcid"])) > 3:
+                pmcid = str(row["pmcid"]).lower()
+                dice = URIRef(resourse+pmcid)
             for heading in row:
                 heading = str(heading)
                 if heading != 'abstract' and heading != 'authors' and heading != 'pdf_json_files' and heading != 'pmc_json_files' and len(heading) != 0:
@@ -211,7 +216,6 @@ def handleFile(filename):
                         pos = heading.find('_')
                         capitalLetter = heading[pos+1].upper()
                         h = heading[0:pos]+capitalLetter+heading[pos+2:]
-                        # print(h)
 
                     metapredicate = cvdo[h]
                     if heading == 'doi':
@@ -359,6 +363,6 @@ for filename in os.listdir(dirname2):
     num += 1   
 
 serilizedRDF = g.serialize(format='turtle')
-f = open("corona_lis.ttl", "w")
+f = open("corona.ttl", "w")
 f.write(serilizedRDF.decode("utf-8"))
 f.close()
