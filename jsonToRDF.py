@@ -33,28 +33,28 @@ def addAuthors(authors, subject):
         g.add( (subject, bibtex.hasAuthor, ndice[name]) )
         g.add( (ndice[name], RDF.type, FOAF.Person) )
         g.add( (ndice[name], RDF.type, URIRef('http://ma-graph.org/class/Author')) )
-        g.add( (ndice[name], FOAF.firstName, Literal(a['first'])) )
-        g.add( (ndice[name], FOAF.lastName, Literal(a['last'])) )
+        g.add( (ndice[name], FOAF.firstName, Literal(a['first'],datatype=XSD.string)) )
+        g.add( (ndice[name], FOAF.lastName, Literal(a['last'],datatype=XSD.string)) )
         if len(a['middle']) != 0:
-            g.add( (ndice[name], cvdo.middleName, Literal(a['middle'][0])) )
+            g.add( (ndice[name], cvdo.middleName, Literal(a['middle'][0],datatype=XSD.string)) )
         if len(a['suffix']) != 0:
-            g.add( (ndice[name], cvdo.hasSuffix, Literal(a['suffix'])) )
-        if 'email' in a and a['email'] is not None and len(a['email']) != 0:
-            g.add( (ndice[name], FOAF.mbox, Literal(a['email'])) )
+            g.add( (ndice[name], cvdo.hasSuffix, Literal(a['suffix'],datatype=XSD.string)) )
+        if 'email' in a and a['email'] is not None and len(a['email'],datatype=XSD.string) != 0:
+            g.add( (ndice[name], FOAF.mbox, Literal(a['email'],datatype=XSD.string)) )
         if 'affiliation' in a and len(a['affiliation']) != 0:
             aff = a['affiliation']
             if len(aff['laboratory']) != 0:
-                g.add( (ndice[name], cvdo.hasLab, Literal(aff['laboratory'])) )
+                g.add( (ndice[name], cvdo.hasLab, Literal(aff['laboratory'],datatype=XSD.string)) )
             if len(aff['institution']) != 0:
-                g.add( (ndice[name], bibtex.hasInstitution, Literal(aff['institution'])) )
+                g.add( (ndice[name], bibtex.hasInstitution, Literal(aff['institution'],datatype=XSD.string)) )
             if len(aff['location']) != 0:
                 location = aff['location']
                 if 'settlement' in location and len(location['settlement']) != 0:    
-                    g.add( (ndice[name], cvdo.hasSettlement, Literal(location['settlement'])) )
+                    g.add( (ndice[name], cvdo.hasSettlement, Literal(location['settlement'],datatype=XSD.string)) )
                 if 'region' in location and len(location['region']) != 0:    
-                    g.add( (ndice[name], cvdo.hasRegion, Literal(location['region'])) )
+                    g.add( (ndice[name], cvdo.hasRegion, Literal(location['region'],datatype=XSD.string)) )
                 if 'country' in location and len(location['country']) != 0:    
-                    g.add( (ndice[name], vcard['country-name'], Literal(location['country'])) )
+                    g.add( (ndice[name], vcard['country-name'], Literal(location['country'],datatype=XSD.string)) )
 
 def addBibEntries(bib_entries, sectionObject, sectionOntology, datastore, link, bibId):
     curLink = str(link).strip()
@@ -63,19 +63,19 @@ def addBibEntries(bib_entries, sectionObject, sectionOntology, datastore, link, 
         bib_entry = bib_entries['BIBREF'+curLink]
         g.add( (sectionObject[bibId], RDF.type , bibtex.Entry) )
         if bib_entry['title']:
-            g.add( (sectionObject[bibId], bibtex.hasTitle , Literal(bib_entry['title'])) )
+            g.add( (sectionObject[bibId], bibtex.hasTitle , Literal(bib_entry['title'],datatype=XSD.string)) )
         if bib_entry['year']:
-            g.add( (sectionObject[bibId], bibtex.hasYear , Literal(bib_entry['year'])) )
+            g.add( (sectionObject[bibId], bibtex.hasYear , Literal(bib_entry['year'],datatype=XSD.nonNegativeInteger)) )
         if bib_entry['venue']:
-            g.add( (sectionObject[bibId], schema.EventVenue , Literal(bib_entry['venue'])) )
+            g.add( (sectionObject[bibId], schema.EventVenue , Literal(bib_entry['venue'],datatype=XSD.string)) )
         if bib_entry['volume']:
-            g.add( (sectionObject[bibId], bibtex.hasVolume , Literal(bib_entry['volume'])) )
+            g.add( (sectionObject[bibId], bibtex.hasVolume , Literal(bib_entry['volume'],datatype=XSD.nonNegativeInteger)) )
         if bib_entry['issn']:
-            g.add( (sectionObject[bibId], bibtex.hasISSN , Literal(bib_entry['issn'])) )
+            g.add( (sectionObject[bibId], bibtex.hasISSN , Literal(bib_entry['issn'],datatype=XSD.string)) )
         if bib_entry['pages']:
-            g.add( (sectionObject[bibId], bibtex.Inbook , Literal(bib_entry['pages'])) )
+            g.add( (sectionObject[bibId], bibtex.Inbook , Literal(bib_entry['pages'],datatype=XSD.string)) )
         if 'DOI' in bib_entry['other_ids'] and bib_entry['other_ids']['DOI']:
-            g.add( (sectionObject[bibId], bibo.doi , Literal(bib_entry['other_ids']['DOI'][0])) )
+            g.add( (sectionObject[bibId], bibo.doi , Literal(bib_entry['other_ids']['DOI'][0],datatype=XSD.string)) )
         # if bib_entry['other_ids']:
             # print(bib_entry['other_ids'])
 
@@ -103,7 +103,7 @@ def addRefs(typeOfSpans, ref_spans, sectionName, sectionObject, sectionOntology,
             addBibEntries(datastore['bib_entries'], sectionObject, sectionOntology, datastore, ref_span_label, bibId)
             refName = sectionObject[sectionName+'_'+bibId]
             g.add( (refName, RDF.type, nif.Phrase) )
-            g.add( (refName, nif.anchorOf, Literal(ref_span_label)) )
+            g.add( (refName, nif.anchorOf, Literal(ref_span_label,datatype=XSD.string)) )
             g.add( (refName, nif.beginIndex, Literal(ref_span['start'],datatype=XSD.nonNegativeInteger)) )
             g.add( (refName, nif.endIndex, Literal(ref_span['end'],datatype=XSD.nonNegativeInteger)) )
             g.add( (refName, nif.referenceContext, sectionObject[sectionName]) )
@@ -121,7 +121,7 @@ def addRefs(typeOfSpans, ref_spans, sectionName, sectionObject, sectionOntology,
             refName2 = sectionObject[ref_span_with_num_label]
 
             g.add( (refName, RDF.type, nif.Phrase) )
-            g.add( (refName, nif.anchorOf, Literal(ref_span_label)) )
+            g.add( (refName, nif.anchorOf, Literal(ref_span_label,datatype=XSD.string)) )
             g.add( (refName, nif.beginIndex, Literal(ref_span['start'],datatype=XSD.nonNegativeInteger)) )
             g.add( (refName, nif.endIndex, Literal(ref_span['end'],datatype=XSD.nonNegativeInteger)) )
             g.add( (refName, nif.referenceContext, sectionObject[sectionName]) )
@@ -146,7 +146,7 @@ def addRefs(typeOfSpans, ref_spans, sectionName, sectionObject, sectionOntology,
                     refId = datastore['ref_entries']
                     refTitle = refId[ref_id]['text']
                 
-                g.add( (refName2, bibtex.hasTitle,  Literal(refTitle)) )
+                g.add( (refName2, bibtex.hasTitle,  Literal(refTitle,datatype=XSD.string)) )
             
 
 def handleFile(filename):
@@ -218,7 +218,7 @@ def handleFile(filename):
                         h = heading[0:pos]+capitalLetter+heading[pos+2:]
 
                     metapredicate = cvdo[h]
-                    metaobject = Literal(row[heading])
+                    metaobject = Literal(row[heading],datatype=XSD.string)
                     if heading == 'doi':
                         metapredicate = bibo.doi
                     if heading == 'journal':
@@ -238,12 +238,15 @@ def handleFile(filename):
                         metaobject = Literal(row[heading],datatype=XSD.date)
                     if heading == 'url':
                         urls = str(row[heading])
+                        metaobject = None
+                        metapredicate = schema.url         
                         if ';' in urls:
                             urls = urls.split(';')
-                        metapredicate = schema.url
-                        for u in urls:
-                            metaobject = URIRef(u.strip())
-                            g.add( (dice, metapredicate, metaobject) )
+                            for u in urls:
+                                metaobject = URIRef(u.strip())
+                        else:
+                            metaobject = URIRef(urls)
+                        g.add( (dice, metapredicate, metaobject) )
                     
                     if not isnan(row[heading]) and heading != 'url':   
                         g.add( (dice, metapredicate, metaobject) )
@@ -266,11 +269,11 @@ def handleFile(filename):
     g.add( (dice, prov.hadPrimarySource, ndice.cord19Dataset) )
     g.add( (ndice.cord19Dataset, RDF.type, prov.Entity) )
     g.add( (ndice.cord19Dataset, prov.generatedAtTime, Literal("2020-05-21T02:52:02Z",datatype=XSD.dateTime)) )
-    g.add( (ndice.cord19Dataset, prov.wasDerivedFrom, Literal("https://ai2-semanticscholar-cord-19.s3-us-west-2.amazonaws.com/latest/document_parses.tar.gz")) )
+    g.add( (ndice.cord19Dataset, prov.wasDerivedFrom, Literal("https://ai2-semanticscholar-cord-19.s3-us-west-2.amazonaws.com/latest/document_parses.tar.gz",datatype=XSD.string)) )
   
     #
     if title:
-        g.add( (dice, DCTERMS.title, Literal(title)) )
+        g.add( (dice, DCTERMS.title, Literal(title,datatype=XSD.string)) )
     g.add( (dice, RDF.type, swc.Paper) )
     g.add( (dice, RDF.type, fabio.ResearchPaper) )
     g.add( (dice, RDF.type, bibo.AcademicArticle) )
@@ -298,8 +301,8 @@ def handleFile(filename):
         g.add( (sectionObject['Abstract'], cvdo.hasSection, s1) )
         g.add( (sectionObject['Abstract'], RDF.type, cvdo['PaperAbstract']) )
         g.add( (s1, RDF.type, sdo.Section) )
-        g.add( (s1, bibtex.hasTitle, Literal(abstract['section'])) )
-        g.add( (s1, nif.isString, Literal(abstract['text'])) )
+        g.add( (s1, bibtex.hasTitle, Literal(abstract['section'],datatype=XSD.string)) )
+        g.add( (s1, nif.isString, Literal(abstract['text'],datatype=XSD.string)) )
         addRefs("ref", abstract['ref_spans'], abstract['section'], sectionObject, sectionOntology, datastore, refDict, refSectionDict);
         addRefs("cite", abstract['cite_spans'], abstract['section'], sectionObject, sectionOntology, datastore, refDict, refSectionDict);
         bodyNum += 1
@@ -324,8 +327,8 @@ def handleFile(filename):
         sectionClass = 'Paper' + sectionName
         g.add( (sectionObject[sectionName], RDF.type, cvdo[sectionClass]) )
         g.add( (s1, RDF.type, sdo.Section) )
-        g.add( (s1, bibtex.hasTitle, Literal(body['section'])) )
-        g.add( (s1, nif.isString, Literal(text)) )
+        g.add( (s1, bibtex.hasTitle, Literal(body['section'],datatype=XSD.string)) )
+        g.add( (s1, nif.isString, Literal(text,datatype=XSD.string)) )
         sectionName = 'Section'+str(bodyNum)
         bodyNum += 1
 
