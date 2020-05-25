@@ -218,6 +218,7 @@ def handleFile(filename):
                         h = heading[0:pos]+capitalLetter+heading[pos+2:]
 
                     metapredicate = cvdo[h]
+                    metaobject = Literal(row[heading])
                     if heading == 'doi':
                         metapredicate = bibo.doi
                     if heading == 'journal':
@@ -232,11 +233,15 @@ def handleFile(filename):
                         metapredicate = fabio.hasPubMedCentralId
                     if heading == 'sha':
                         metapredicate = FOAF.sha1
+                    if heading == 'publish_time':
+                        metapredicate = DCTERMS.issued
+                        metaobject = Literal(row[heading],datatype=XSD.date)
                     if heading == 'url':
                         metapredicate = schema.url
+                        metaobject = URIRef(row[heading])
                     
                     if not isnan(row[heading]):   
-                        g.add( (dice, metapredicate, Literal(row[heading])) )
+                        g.add( (dice, metapredicate, metaobject) )
 
     # print('Csv has finished')                    
 
