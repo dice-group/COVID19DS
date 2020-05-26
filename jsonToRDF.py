@@ -246,7 +246,8 @@ def handleFile(filename):
                                 metaobject = URIRef(u.strip())
                         else:
                             metaobject = URIRef(urls)
-                        g.add( (dice, metapredicate, metaobject) )
+                        if not isnan(urls):
+                            g.add( (dice, metapredicate, metaobject) )
                     
                     if not isnan(row[heading]) and heading != 'url':   
                         g.add( (dice, metapredicate, metaobject) )
