@@ -1,0 +1,137 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix void: <http://rdfs.org/ns/void#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <#> .
+
+:COVID19DS
+	rdf:type void:Dataset ;
+	foaf:homepage <https://dice-research.org/COVID19DS> ;
+	dcterms:title "COVID 19 Dataset" ;
+	void:sparqlEndpoint <https://covid-19ds.data.dice-research.org/sparql>;
+	dcterms:contributor <https://dice-research.org> ;
+	dcterms:source <https://github.com/dice-group/COVID19DS> ;
+	dcterms:modified "2020-05-23"^^xsd:date ; 
+	dcterms:publisher :Svetlana_Pestryakova ;
+					  :Daniel_Vollmers ;
+					  :Mohamed_Ahmed_Sherif ;
+					  :Stefan_Heindorf ;
+					  :Muhammad_Saleem ; 
+					  :Diego_Moussallem ;
+					  :Axel-Cyrille_Ngonga_Ngomo ;
+	dcterms:license <https://creativecommons.org/licenses/by-nc/3.0/> ;
+	void:feature <http://www.w3.org/ns/formats/N-Triples> ;
+	void:triples 69429142 ;
+	void:vocabulary <https://covid-19ds.data.dice-research.org/resource/> ;
+	void:vocabulary <https://covid-19ds.data.dice-research.org/ontology/> ;
+	void:vocabulary <http://purl.org/ontology/bibo/> ;
+	void:vocabulary <http://purl.org/net/nknouf/ns/bibtex#> ;
+	void:vocabulary <http://purl.org/dc/terms/> ;
+	void:vocabulary <http://purl.org/spar/fabio/> ;
+	void:vocabulary <http://xmlns.com/foaf/0.1/> ;
+	void:vocabulary <http://www.w3.org/2005/11/its/rdf#> ;
+	void:vocabulary <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> ;
+	void:vocabulary <http://www.w3.org/ns/prov#> ;
+	void:vocabulary <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ;
+	void:vocabulary <http://www.w3.org/2000/01/rdf-schema#> ;
+	void:vocabulary <http://schema.org/> ;
+	void:vocabulary <http://salt.semanticauthoring.org/ontologies/sdo#> ;
+	void:vocabulary <http://data.semanticweb.org/ns/swc/ontology#> ;
+	void:vocabulary <http://www.w3.org/2006/vcard/ns#> ;
+	void:vocabulary <http://www.w3.org/XML/1998/namespace> ;
+	void:vocabulary <http://www.w3.org/2001/XMLSchema#> ;
+	void:vocabulary <http://ns.inria.fr/covid19/> ;
+	void:vocabulary <https://www.ncbi.nlm.nih.gov/pmc/articles/> ;
+	void:vocabulary <http://pubannotation.org/docs/sourcedb/CORD-19/sourceid/> ;
+	void:vocabulary <https://data.linkeddatafragments.org/> ;
+	void:vocabulary <https://fhircat.org/cord-19/fhir/PMC/Composition/> ;
+	void:vocabulary <http://ma-graph.org/entity/> ;
+	void:linkPredicate itsrdf:taIdentRef ;
+	void:linkPredicate rdfs:seeAlso ;
+	void:linkPredicate owl:sameAs .
+
+cvdr:covid19ds_inria a void:Linkset; 
+	void:target <https://covid-19ds.data.dice-research.org/>; 
+	void:target <http://ns.inria.fr/covid19/>; 
+	void:linkPredicate owl:sameAs; 
+	void:triples 31261,31261; .
+
+cvdr:covid19ds_ncbi a void:Linkset; 
+	void:target <https://covid-19ds.data.dice-research.org/>; 
+	void:target <https://www.ncbi.nlm.nih.gov/pmc/articles/>; 
+	void:linkPredicate owl:sameAs; 
+	void:triples 31261,31261;
+
+cvdr:covid19ds_pubannotation a void:Linkset; 
+	void:target <https://covid-19ds.data.dice-research.org/>; 
+	void:target <http://pubannotation.org/docs/sourcedb/CORD-19/sourceid/>; 
+	void:linkPredicate owl:sameAs; 
+	void:triples 31261,31261; 
+
+cvdr:covid19ds_linkeddatafragments a void:Linkset; 
+	void:target <https://covid-19ds.data.dice-research.org/>; 
+	void:target <https://data.linkeddatafragments.org/>; 
+	void:linkPredicate owl:sameAs; 
+	void:triples 31261,31261; 
+
+cvdr:covid19ds_fhircat a void:Linkset; 
+	void:target <https://covid-19ds.data.dice-research.org/>; 
+	void:target <https://fhircat.org/cord-19/fhir/PMC/Composition/>; 
+	void:linkPredicate owl:sameAs; 
+	void:triples 31261,31261; 
+
+cvdr:covid19ds_fhircat a void:Linkset; 
+	void:target <https://covid-19ds.data.dice-research.org/>; 
+	void:target <https://fhircat.org/cord-19/fhir/PMC/Composition/>; 
+	void:linkPredicate rdfs:seeAlso; 
+	void:triples 31261,31261;
+
+cvdr:covid19ds_makg a void:Linkset; 
+	void:target <https://covid-19ds.data.dice-research.org/>; 
+	void:target <http://ma-graph.org/entity/>; 
+	void:linkPredicate owl:sameAs; 
+	void:triples 9345,9345; 
+		 
+:Svetlana_Pestryakova a 
+	foaf:Person ;
+	rdfs:label "Svetlana Pestryakova" ;
+	foaf:homepage <https://dice-research.org/SvetlanaPestryakova>; 
+	foaf:mbox <mailto:pestryak@mail.uni-paderborn.de> .
+
+:Daniel_Vollmers a 
+	foaf:Person ;
+	rdfs:label "Daniel Vollmers" ;
+	foaf:homepage <https://dice-research.org/DanielVollmers>; 
+	foaf:mbox <daniel.vollmers@uni-paderborn.de> .
+
+:Mohamed_Ahmed_Sherif a 
+	foaf:Person ;
+	rdfs:label "Mohamed Ahmed Sherif" ;
+	foaf:homepage <https://dice-research.org/MohamedAhmedSherif>; 
+	foaf:mbox <mailto:mohamed.sherif@upb.de> .
+
+:Stefan_Heindorf a 
+	foaf:Person ;
+	rdfs:label "Stefan Heindorf" ;
+	foaf:homepage <https://dice-research.org/StefanHeindorf>; 
+	foaf:mbox <mailto:heindorf@uni-paderborn.de> .
+
+:Muhammad_Saleem a 
+	foaf:Person ;
+	rdfs:label "Muhammad Saleem" ;
+	foaf:homepage <https://dice-research.org/MuhammadSaleem>; 
+	foaf:mbox <mailto:saleem@informatik.uni-leipzig.de> .
+
+:Diego_Moussallem a 
+	foaf:Person ;
+	rdfs:label "Diego Moussallem" ;
+	foaf:homepage <https://dice-research.org/DiegoMoussallem>; 
+	foaf:mbox <mailto:diego.moussallem@uni-paderborn.de> .
+
+:Axel-Cyrille_Ngonga_Ngomo a 
+	foaf:Person ;
+	rdfs:label "Axel-Cyrille Ngonga Ngomo" ;
+	foaf:homepage <https://dice-research.org/AxelCyrilleNgongaNgomo>; 
+	foaf:mbox <mailto:axel.ngonga@upb.de> .

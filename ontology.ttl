@@ -1,0 +1,124 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix dc11: <http://purl.org/dc/elements/1.1/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix ns0: <http://www.w3.org/2003/06/sw-vocab-status/ns#> .
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix bibo: <http://purl.org/ontology/bibo/> .
+@prefix bibtex: <http://purl.org/net/nknouf/ns/bibtex#> .
+@prefix cvdo: <https://covid-19ds.data.dice-research.org/ontology/> .
+@prefix cvdr: <https://covid-19ds.data.dice-research.org/resource/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix fabio: <http://purl.org/spar/fabio/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix its: <http://www.w3.org/2005/11/its/rdf#> .
+@prefix nif: <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix schema: <http://schema.org/> .
+@prefix sdo: <http://salt.semanticauthoring.org/ontologies/sdo#> .
+@prefix swc: <http://data.semanticweb.org/ns/swc/ontology#> .
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+cvdo:
+  a owl:Ontology ;
+  dc11:description "An ontology for the COVID19DS dataset for representing publication data in RDF"^^xsd:string ;
+  dc11:title "COVID19DS vocabulary"^^xsd:string .
+
+cvdo:cordUid
+  rdfs:isDefinedBy cvdo: ;
+  a rdf:Property, owl:ObjectProperty ;
+  rdfs:comment "cord uid from the metadata file"^^xsd:string ;
+  rdfs:domain swc:Paper ,
+  			  bibo:AcademicArticle,
+  			  schema:ScholarlyArticle;
+  rdfs:label "cordUid"^^xsd:string ;
+  rdfs:range rdfs:Literal ;
+  ns0:term_status "testing"^^xsd:string . 
+
+cvdo:sourceX
+  rdfs:isDefinedBy cvdo: ;
+  a rdf:Property, owl:ObjectProperty ;
+  rdfs:comment "sourceX from the metadata file"^^xsd:string ;
+  rdfs:domain swc:Paper ,
+  			  bibo:AcademicArticle,
+  			  schema:ScholarlyArticle;
+  rdfs:label "sourceX"^^xsd:string ;
+  rdfs:range rdfs:Literal ;
+  ns0:term_status "testing"^^xsd:string . 
+
+cvdo:hasBody
+  rdfs:isDefinedBy cvdo: ;
+  a rdf:Property, owl:ObjectProperty ;
+  rdfs:comment "hasBody property links a publication subject to its PaperBody object"^^xsd:string ;
+  rdfs:domain swc:Paper ,
+  			  bibo:AcademicArticle,
+  			  schema:ScholarlyArticle;
+  rdfs:label "hasBody"^^xsd:string ;
+  rdfs:range cvdo:PaperBody ;
+  ns0:term_status "testing"^^xsd:string . 
+
+cvdo:hasDiscussion
+  rdfs:isDefinedBy cvdo: ;
+  a rdf:Property, owl:ObjectProperty ;
+  rdfs:comment "hasDiscussion property links a publication subject to its section object with the name Discussion"^^xsd:string ;
+  rdfs:domain swc:Paper ,
+  			  bibo:AcademicArticle,
+  			  schema:ScholarlyArticle;
+  rdfs:label "hasDiscussion"^^xsd:string ;
+  rdfs:range cvdo:PaperDiscussion ;
+  ns0:term_status "testing"^^xsd:string .
+
+cvdo:PaperDiscussion
+  rdfs:isDefinedBy cvdo: ;
+  a owl:Class, rdfs:Class ;
+  rdfs:comment "PaperDiscussion is the class representing the discussion of the paper"^^xsd:string ;
+  rdfs:label "PaperDiscussion"^^xsd:string ;
+  ns0:term_status "stable"^^xsd:string .
+
+cvdo:hasIntroduction
+  rdfs:isDefinedBy cvdo: ;
+  a rdf:Property, owl:ObjectProperty ;
+  rdfs:comment "hasIntroduction property links a publication subject to its section object with the name Introduction"^^xsd:string ;
+  rdfs:domain swc:Paper ,
+  			  bibo:AcademicArticle,
+  			  schema:ScholarlyArticle;
+  rdfs:label "hasIntroduction"^^xsd:string ;
+  rdfs:range cvdo:PaperIntroduction ;
+  ns0:term_status "testing"^^xsd:string .
+
+cvdo:PaperIntroduction
+  rdfs:isDefinedBy cvdo: ;
+  a owl:Class, rdfs:Class ;
+  rdfs:comment "PaperIntroduction is the class representing the introduction of the paper"^^xsd:string ;
+  rdfs:label "PaperIntroduction"^^xsd:string ;
+  ns0:term_status "stable"^^xsd:string .
+
+cvdo:PaperBody
+  rdfs:isDefinedBy cvdo: ;
+  a owl:Class, rdfs:Class ;
+  rdfs:comment "PaperBody is the class representing the body of the paper"^^xsd:string ;
+  rdfs:label "PaperBody"^^xsd:string ;
+  ns0:term_status "stable"^^xsd:string .
+
+cvdo:hasSection
+  rdfs:isDefinedBy cvdo: ;
+  a rdf:Property, owl:ObjectProperty ;
+  rdfs:comment "hasSection property for each section in the paper"^^xsd:string ;
+  rdfs:domain cvdo:PaperBody ;
+  rdfs:label "hasSection"^^xsd:string ;
+  rdfs:range sdo:Section ;
+  ns0:term_status "testing"^^xsd:string .
+
+cvdo:middleName
+  rdfs:isDefinedBy cvdo: ;
+  a rdf:Property, owl:ObjectProperty ;
+  rdfs:comment "A middleName of the author"^^xsd:string ;
+  rdfs:domain foaf:Person ;
+  rdfs:label "middleName"^^xsd:string ;
+  rdfs:range rdfs:Literal ;
+  ns0:term_status "testing"^^xsd:string .
+
