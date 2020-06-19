@@ -58,6 +58,17 @@ def handleFile(filename):
 
     for row in reader:
         cord_uid = str(row["cord_uid"])
+        sha = str(row["sha"])
+        if ';' in sha:
+            shas = sha.split(';')
+            for s in shas:
+                if datastore["paper_id"] == s.strip():
+                    sha = s.strip()
+
+        if sha == datastore["paper_id"] or row['pmcid'] == datastore['paper_id']:
+            if len(str(row["pmcid"])) > 3:
+                pmcid = str(row["pmcid"]).lower()
+                dice = URIRef(resourse+pmcid)
 
     for row in makg_csv_reader:
         if cord_uid == row['cord_uid']:
