@@ -1,6 +1,6 @@
 # !/bin/bash
 # generating rdf file from all documents
-python3 jsonToRDF.py ../document_parses/
+python3 jsonToRDF.py document_parses/
 # linking Authors
 java -Xmx110g -jar limes-core-1.7.1.jar limesConfig.xml 
 # linking Publications
