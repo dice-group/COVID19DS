@@ -31,8 +31,8 @@
     </PREFIX>
 
 	<SOURCE>
-		<ID>covid</ID>
-		<ENDPOINT>/home/user/Documents/work/COVID19DS/corona_new</ENDPOINT>
+		<ID>bibentries</ID>
+		<ENDPOINT>/home/user/Documents/work/COVID19DS/corona.ttl</ENDPOINT>
 		<VAR>?x</VAR>
 		<PAGESIZE>-1</PAGESIZE>
 		<RESTRICTION>?x a bibtex:Entry</RESTRICTION>
@@ -42,8 +42,8 @@
 
 
 	<TARGET>
-		<ID>covid2</ID>
-		<ENDPOINT>/home/user/Documents/work/COVID19DS/corona_new</ENDPOINT>
+		<ID>bibentries1</ID>
+		<ENDPOINT>/home/user/Documents/work/COVID19DS/corona.ttl</ENDPOINT>
 		<VAR>?y</VAR>
 		<PAGESIZE>-1</PAGESIZE>
 		<RESTRICTION>?y a swc:Paper</RESTRICTION>
@@ -55,7 +55,7 @@
 	<METRIC>ExactMatch(x.name,y.name)|1.0</METRIC>
 	<ACCEPTANCE>
 		<THRESHOLD>1.0</THRESHOLD>
-		<FILE>accepted.nt</FILE>
+		<FILE>bibEntries_hasPublication.nt</FILE>
 		<RELATION>owl:sameAs</RELATION>
 	</ACCEPTANCE>
 
