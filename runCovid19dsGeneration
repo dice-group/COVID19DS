@@ -7,9 +7,11 @@ java -Xmx110g -jar limes-core-1.7.1.jar limesConfig.xml
 java -Xmx110g -jar limes-core-1.7.1.jar limesConfigPublications.xml 
 # linking BibEntries
 java -Xmx110g -jar limes-core-1.7.1.jar limesConfigBibEntries.xml
-folderName=version4
-mkdir $folderName
-# mv corona.ttl $folderName
+stringVersion=version_
+now="$(date +'%Y-%m-%d')"
+folderName=$stringVersion$now
+[ ! -d $folderName ] && mkdir $folderName
+mv corona.ttl $folderName
 mv authors_sameAs.nt $folderName
 mv covidAuthors_covidAuthors1statistics.json $folderName
 mv covidPublications_covidPublications1statistics.json $folderName
