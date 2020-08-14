@@ -186,18 +186,11 @@ def handleFile(filename):
     # metadata
     pmcid = None
     sha = None
-    # with open('test.csv', newline='') as csvfile:
-    #     reader = csv.DictReader(csvfile)
-    # reader = pd.read_csv('metadata.csv',
-    #     dtype={'cord_uid':str,'sha':str,'source_x':str,'title':str
-    #     ,'doi':str,'pmcid':str,'pubmed_id':str,'license':str,
-    #     'abstract':str,'publish_time':str,'authors':str,'journal':str,
-    #     'mag_id':str,'who_covidence_id':str,'arxiv_id':str,
-    #     'pdf_json_files':str,'pmc_json_files':str,'url':str,'s2_id':str}).to_dict('records', into=OrderedDict)
-    # # pd.read_csv('metadata.csv', sep=',', index_col=0, squeeze=True, header=None).to_dict()
+    cord_uid = None
 
     for row in reader:
         # print(row['sha'])
+        cord_uid = str(row["cord_uid"])
         sha = str(row["sha"])
         if ';' in sha:
             shas = sha.split(';')
@@ -253,7 +246,12 @@ def handleFile(filename):
                     if not isnan(row[heading]) and heading != 'url':   
                         g.add( (dice, metapredicate, metaobject) )
 
-    # print('Csv has finished')                    
+    # print('Csv has finished')  
+    for row in makg_csv_reader:
+        if cord_uid == row['cord_uid']:
+            if row['mag_id']:
+                g.add( (dice, OWL.sameAs, URIRef("http://ma-graph.org/entity/"+row['mag_id'])) )        
+                  
 
     # sameAs linking
     if pmcid:
@@ -351,6 +349,10 @@ reader = pd.read_csv('metadata.csv',
     'abstract':str,'publish_time':str,'authors':str,'journal':str,
     'mag_id':str,'who_covidence_id':str,'arxiv_id':str,
     'pdf_json_files':str,'pmc_json_files':str,'url':str,'s2_id':str}).to_dict('records', into=OrderedDict)
+
+makg_csv_reader = pd.read_csv('2020-06-17-CORD-UID-MappedTo-2020-06-12-MAG-ID.csv',
+    names=['cord_uid','mag_id'],
+    dtype={'cord_uid':str,'mag_id':str}).to_dict('records', into=OrderedDict)
 
 
 def isnan(value):

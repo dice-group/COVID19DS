@@ -1,0 +1,18 @@
+# !/bin/bash
+# generating rdf file from all documents
+python3 jsonToRDF.py ../document_parses/
+# linking Authors
+java -Xmx110g -jar limes-core-1.7.1.jar limesConfig.xml 
+# linking Publications
+java -Xmx110g -jar limes-core-1.7.1.jar limesConfigPublications.xml 
+# linking BibEntries
+java -Xmx110g -jar limes-core-1.7.1.jar limesConfigBibEntries.xml
+folderName=version4
+mkdir $folderName
+# mv corona.ttl $folderName
+mv authors_sameAs.nt $folderName
+mv covidAuthors_covidAuthors1statistics.json $folderName
+mv covidPublications_covidPublications1statistics.json $folderName
+mv publication_sameAs.nt $folderName
+mv bibEntries_hasPublication.nt $folderName
+mv bibentries_bibentries1statistics.json $folderName

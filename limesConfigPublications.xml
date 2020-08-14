@@ -17,34 +17,44 @@
 		<NAMESPACE>http://linkedgeodata.org/ontology/</NAMESPACE>
 		<LABEL>lgdo</LABEL>
     </PREFIX>
+    <PREFIX>
+		<NAMESPACE>http://purl.org/net/nknouf/ns/bibtex#</NAMESPACE>
+		<LABEL>bibtex</LABEL>
+    </PREFIX>
+    <PREFIX>
+		<NAMESPACE>http://purl.org/dc/terms/</NAMESPACE>
+		<LABEL>dcterms</LABEL>
+    </PREFIX>
+    <PREFIX>
+		<NAMESPACE>http://data.semanticweb.org/ns/swc/ontology#</NAMESPACE>
+		<LABEL>swc</LABEL>
+    </PREFIX>
 
 	<SOURCE>
-		<ID>covidAuthors</ID>
+		<ID>covidPublications</ID>
 		<ENDPOINT>/home/user/Documents/work/COVID19DS/corona.ttl</ENDPOINT>
 		<VAR>?x</VAR>
 		<PAGESIZE>-1</PAGESIZE>
-		<RESTRICTION>?x a foaf:Person</RESTRICTION>
-		<PROPERTY>foaf:firstName</PROPERTY>
-		<PROPERTY>foaf:lastName</PROPERTY>
-		<FUNCTION>concat(foaf:firstName, foaf:lastName, glue=" ") RENAME name</FUNCTION>
+		<RESTRICTION>?x a swc:Paper</RESTRICTION>
+		<PROPERTY>dcterms:title RENAME name</PROPERTY>
 		<TYPE>TURTLE</TYPE>
 	</SOURCE>
 
 
 	<TARGET>
-		<ID>covidAuthors1</ID>
+		<ID>covidPublications1</ID>
 		<ENDPOINT>http://ma-graph.org/sparql</ENDPOINT>
 		<VAR>?y</VAR>
 		<PAGESIZE>-1</PAGESIZE>
-		<RESTRICTION>?y a &lt;http://ma-graph.org/class/Author&gt;</RESTRICTION>
-		<PROPERTY>foaf:name RENAME name</PROPERTY>
+		<RESTRICTION>?y a &lt;http://ma-graph.org/class/Paper&gt;</RESTRICTION>
+		<PROPERTY>dcterms:title RENAME name</PROPERTY>
 	</TARGET>
 
 
-	<METRIC>ExactMatch(x.name,y.name)|0.6</METRIC>
+	<METRIC>ExactMatch(x.name,y.name)|1.0</METRIC>
 	<ACCEPTANCE>
 		<THRESHOLD>1.0</THRESHOLD>
-		<FILE>authors_sameAs.nt</FILE>
+		<FILE>publication_sameAs.nt</FILE>
 		<RELATION>owl:sameAs</RELATION>
 	</ACCEPTANCE>
 
