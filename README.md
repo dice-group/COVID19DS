@@ -8,6 +8,10 @@ python3 jsonToRDF.py folderName/
 
 folderName/ - the name of the folder that contains the subset of papers. Each paper is represented as a single JSON object.
 
+To run the full generation of the dataset including linking:
+```
+./runCovid19dsGeneration
+```
 
 ## Namespaces
 
