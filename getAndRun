@@ -1,0 +1,11 @@
+# !/bin/bash
+# 2020-08-13
+# date=$1
+# [ ! -d docs ] && mkdir docs
+# [ ! -d docs/$date ] && wget https://ai2-semanticscholar-cord-19.s3-us-west-2.amazonaws.com/historical_releases/cord-19_$1.tar.gz
+# tar -C docs -zxvf cord-19_$date.tar.gz
+# rm -r document_parses
+# tar -zxvf docs/$date/document_parses.tar.gz
+# rm -r metadata.csv
+# cp docs/$date/metadata.csv metadata.csv
+./runCovid19dsGeneration

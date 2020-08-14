@@ -13,6 +13,12 @@ To run the full generation of the dataset including linking:
 ./runCovid19dsGeneration
 ```
 
+To download the new version from CORD19 and run generation with linking:
+```
+./getAndRun yyyy-mm-dd
+```
+yyyy-mm-dd - the date of the version that you would like to get from CORD19
+
 ## Namespaces
 
 Below we use the following namespaces:
