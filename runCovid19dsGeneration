@@ -20,4 +20,4 @@ mv bibEntries_hasPublication.nt $folderName
 mv bibentries_bibentries1statistics.json $folderName
 # upload files into hobbit ftp
 source pfile # PASSWORD="..."
-lftp -e "set ftp:ssl-protect-data true; mirror -R $folderName public/COVID19DS/archive/; bye" -u hobbit,$PASSWORD hobbitdata.informatik.uni-leipzig.de
+lftp -e "set ftp:ssl-protect-data true; mirror -R $folderName public/COVID19DS/archive/$folderName/; bye" -u hobbit,$PASSWORD hobbitdata.informatik.uni-leipzig.de
