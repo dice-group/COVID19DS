@@ -8,6 +8,9 @@ import csv
 import pandas as pd
 from collections import OrderedDict, defaultdict
 import annotateStringsFromEndpoint
+from multiprocessing import Pool
+
+pool = Pool(processes=4)
 
 g = Graph()
 ontology = "https://covid-19ds.data.dice-research.org/ontology/"
@@ -298,7 +301,9 @@ def handleFile(filename):
         
         g.add( (dice, cvdo['hasAbstract'], sectionObject['Abstract']) )
         s1 = sectionObject['Section'+str(bodyNum)]
-        annotateStringsFromEndpoint.annotate_nif_string(str(abstract['text']).replace("\n",""),str(s1));
+        
+        pool.apply_async(annotateStringsFromEndpoint.annotate_nif_string, [str(abstract['text']).replace("\n",""),str(s1)]);
+        # annotateStringsFromEndpoint.annotate_nif_string(str(abstract['text']).replace("\n",""),str(s1));
         g.add( (sectionObject['Abstract'], cvdo.hasSection, s1) )
         g.add( (sectionObject['Abstract'], RDF.type, cvdo['PaperAbstract']) )
         g.add( (s1, RDF.type, sdo.Section) )
@@ -324,7 +329,8 @@ def handleFile(filename):
         ref_spans = body['ref_spans']
 
         s1 = sectionObject['Section'+str(bodyNum)]
-        annotateStringsFromEndpoint.annotate_nif_string(str(text).replace("\n",""),str(s1));
+        pool.apply_async(annotateStringsFromEndpoint.annotate_nif_string, [str(text).replace("\n",""),str(s1)]);
+        # annotateStringsFromEndpoint.annotate_nif_string(str(text).replace("\n",""),str(s1));
         g.add( (sectionObject[sectionName], cvdo.hasSection, s1) )
         sectionClass = 'Paper' + sectionName
         g.add( (sectionObject[sectionName], RDF.type, cvdo[sectionClass]) )
@@ -368,20 +374,46 @@ dirname = sys.argv[1]
 dirname1 = dirname+"pdf_json"
 print(dirname1)
 num = 0
-for filename in os.listdir(dirname1):
-    print(str(num)+"/"+str(len(os.listdir(dirname1))))  
-    handleFile(dirname1+"/"+filename)
-    num += 1
+
+chunks = None
+maxAmountOfFilesForOneIteration = 50000
+if len(os.listdir(dirname1)) > maxAmountOfFilesForOneIteration:
+    data = os.listdir(dirname1)
+    chunks = [data[x:x+maxAmountOfFilesForOneIteration] for x in range(0, len(data), maxAmountOfFilesForOneIteration)]
+print("chunks: "+str(len(chunks)))
+
+for idx,chunk in enumerate(chunks):
+    for filename in chunk:
+        print(str(num)+"/"+str(len(chunk))+" chunk: "+str(idx))  
+        handleFile(dirname1+"/"+filename)
+        num += 1
+
+    serilizedRDF = g.serialize(format='turtle')
+    f = open("corona_test.ttl", "a")
+    f.write(serilizedRDF.decode("utf-8"))
+    g = Graph()
 
 dirname2 = dirname+"pmc_json"
 print(dirname2)
 num = 0
-for filename in os.listdir(dirname2): 
-    print(str(num)+"/"+str(len(os.listdir(dirname2))))    
-    handleFile(dirname2+"/"+filename)
-    num += 1   
+chunks = None
+if len(os.listdir(dirname2)) > maxAmountOfFilesForOneIteration:
+    data = os.listdir(dirname2)
+    chunks = [data[x:x+maxAmountOfFilesForOneIteration] for x in range(0, len(data), maxAmountOfFilesForOneIteration)]
+print("chunks: "+str(len(chunks)))
 
-serilizedRDF = g.serialize(format='turtle')
-f = open("corona.ttl", "a")
-f.write(serilizedRDF.decode("utf-8"))
+for idx,chunk in enumerate(chunks):
+    for filename in chunk:
+        print(str(num)+"/"+str(len(chunk))+" chunk: "+str(idx))  
+        handleFile(dirname2+"/"+filename)
+        num += 1
+
+    serilizedRDF = g.serialize(format='turtle')
+    f = open("corona_test.ttl", "a")
+    f.write(serilizedRDF.decode("utf-8"))
+    g = Graph()
+
 f.close()
+
+pool.close()
+pool.join()
