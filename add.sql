@@ -6,6 +6,12 @@ delete from DB.DBA.LOAD_LIST;
 
 delete from DB.DBA.LOAD_LIST;
  commit work; 
+ ld_add('/rdfData/corona_entities.ttl','https://covid-19ds.data.dice-research.org/resource/corona');
+ rdf_loader_run();
+ checkpoint;
+
+delete from DB.DBA.LOAD_LIST;
+ commit work; 
  ld_add('/rdfData/authors_sameAs.nt','https://covid-19ds.data.dice-research.org/resource/corona');
  rdf_loader_run();
  checkpoint;
