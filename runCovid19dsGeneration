@@ -2,16 +2,20 @@
 # generating rdf file from all documents
 python3 jsonToRDF.py document_parses/
 # linking Authors
-java -Xmx110g -jar limes-core-1.7.1.jar limesConfig.xml 
+java -Xmx110g -jar limes-core-1.7.1.jar limesConfig.xml
+sleep 1m
 # linking Publications
 java -Xmx110g -jar limes-core-1.7.1.jar limesConfigPublications.xml 
+sleep 1m
 # linking BibEntries
 java -Xmx110g -jar limes-core-1.7.1.jar limesConfigBibEntries.xml
+sleep 1m
 stringVersion=version_
 now="$(date +'%Y-%m-%d')"
 folderName=$stringVersion$now
 [ ! -d $folderName ] && mkdir $folderName
 mv corona.ttl $folderName
+mv corona_entities.ttl $folderName
 mv authors_sameAs.nt $folderName
 mv covidAuthors_covidAuthors1statistics.json $folderName
 mv covidPublications_covidPublications1statistics.json $folderName
@@ -22,7 +26,7 @@ mv bibentries_bibentries1statistics.json $folderName
 ####################################################
 # upload files into hobbit ftp
 source pfile # PASSWORD="..."
-lftp -e "set ftp:ssl-protect-data true; mirror -R $folderName public/COVID19DS/archive/$folderName/; bye" -u hobbit,$PASSWORD hobbitdata.informatik.uni-leipzig.de
+lftp -e "set ftp:ssl-protect-data true; mirror -R $folderName public/COVID19DS/archive/; bye" -u hobbit,$PASSWORD hobbitdata.informatik.uni-leipzig.de
 
 #####################################################
 # Update in virtuoso
