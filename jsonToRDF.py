@@ -389,7 +389,7 @@ for idx,chunk in enumerate(chunks):
         num += 1
 
     serilizedRDF = g.serialize(format='turtle')
-    f = open("corona_test.ttl", "a")
+    f = open("corona.ttl", "a")
     f.write(serilizedRDF.decode("utf-8"))
     g = Graph()
 
