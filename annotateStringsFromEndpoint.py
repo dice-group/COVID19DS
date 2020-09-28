@@ -14,7 +14,7 @@ import sys
 nlp = spacy.load("en_ner_bionlp13cg_md")
 nlp.max_length=3000000
 out_file=open("corona_entities.ttl",'w', encoding='utf-8')
-out_file.write('@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n @prefix nif: <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> .\n@prefix nif: <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> .\n@prefix itsrdf: <http://www.w3.org/2005/11/its/rdf#> .\n@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .')
+out_file.write('@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n @prefix nif: <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> .\n@prefix nif: <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> .\n@prefix itsrdf: <http://www.w3.org/2005/11/its/rdf#> .\n@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n')
 def add_nif_entities(reference_context,base_uri,entities,doc):
     for ent in entities:
         if "http" not in ent.text: 
