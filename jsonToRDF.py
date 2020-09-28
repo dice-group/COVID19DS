@@ -150,7 +150,7 @@ def addRefs(typeOfSpans, ref_spans, sectionName, sectionObject, sectionOntology,
                     refId = datastore['ref_entries']
                     refTitle = refId[ref_id]['text']
                 
-                g.add( (refName2, bibtex.hasTitle,  Literal(refTitle,datatype=XSD.string)) )
+                g.add( (refName2, bibtex.hasTitle,  Literal(refTitle.strip().replace("\n",""),datatype=XSD.string)) )
             
 
 def handleFile(filename):
@@ -276,7 +276,7 @@ def handleFile(filename):
   
     #
     if title:
-        g.add( (dice, DCTERMS.title, Literal(title,datatype=XSD.string)) )
+        g.add( (dice, DCTERMS.title, Literal(title.strip().replace("\n",""),datatype=XSD.string)) )
     g.add( (dice, RDF.type, swc.Paper) )
     g.add( (dice, RDF.type, fabio.ResearchPaper) )
     g.add( (dice, RDF.type, bibo.AcademicArticle) )
@@ -307,8 +307,8 @@ def handleFile(filename):
         g.add( (sectionObject['Abstract'], cvdo.hasSection, s1) )
         g.add( (sectionObject['Abstract'], RDF.type, cvdo['PaperAbstract']) )
         g.add( (s1, RDF.type, sdo.Section) )
-        g.add( (s1, bibtex.hasTitle, Literal(abstract['section'],datatype=XSD.string)) )
-        g.add( (s1, nif.isString, Literal(abstract['text'],datatype=XSD.string)) )
+        g.add( (s1, bibtex.hasTitle, Literal(abstract['section'].strip().replace("\n",""),datatype=XSD.string)) )
+        g.add( (s1, nif.isString, Literal(abstract['text'].strip().replace("\n",""),datatype=XSD.string)) )
         addRefs("ref", abstract['ref_spans'], abstract['section'], sectionObject, sectionOntology, datastore, refDict, refSectionDict);
         addRefs("cite", abstract['cite_spans'], abstract['section'], sectionObject, sectionOntology, datastore, refDict, refSectionDict);
         bodyNum += 1
@@ -335,8 +335,8 @@ def handleFile(filename):
         sectionClass = 'Paper' + sectionName
         g.add( (sectionObject[sectionName], RDF.type, cvdo[sectionClass]) )
         g.add( (s1, RDF.type, sdo.Section) )
-        g.add( (s1, bibtex.hasTitle, Literal(body['section'],datatype=XSD.string)) )
-        g.add( (s1, nif.isString, Literal(text,datatype=XSD.string)) )
+        g.add( (s1, bibtex.hasTitle, Literal(body['section'].strip().replace("\n",""),datatype=XSD.string)) )
+        g.add( (s1, nif.isString, Literal(text.strip().replace("\n",""),datatype=XSD.string)) )
         sectionName = 'Section'+str(bodyNum)
         bodyNum += 1
 
