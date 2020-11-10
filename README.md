@@ -19,6 +19,13 @@ To download the new version from CORD19 and run generation with linking:
 ```
 yyyy-mm-dd - the date of the version that you would like to get from CORD19
 
+
+To run entity recognition on generated ttl file:
+```
+./ERfromttlScript filename
+```
+filename - the path to the ttl file
+
 ## Namespaces
 
 Below we use the following namespaces:
