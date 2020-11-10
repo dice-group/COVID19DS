@@ -1,5 +1,5 @@
 from rdflib import URIRef, BNode, Literal, Namespace, Graph, XSD
-from rdflib.namespace import RDF, RDFS, FOAF, DCTERMS, OWL
+from rdflib.namespace import RDF, RDFS, DCTERMS, OWL
 import json
 import re
 import sys
@@ -28,6 +28,7 @@ bibo = Namespace("http://purl.org/ontology/bibo/")
 fabio = Namespace("http://purl.org/spar/fabio/")
 cvdo = Namespace("https://covid-19ds.data.dice-research.org/ontology/")
 ndice = Namespace("https://covid-19ds.data.dice-research.org/resource/") #cvdr
+FOAF = Namespace('http://xmlns.com/foaf/0.1/')
 
 def addAuthors(authors, subject):
     for a in authors:

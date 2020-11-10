@@ -1,0 +1,10 @@
+# !/bin/bash
+# run java program to generate a txt file which only contains the texts, which should be annotated.
+# don't forget to change filename in -Dexec.args
+filename=$1 # "/home/user/Documents/work/COVID19DS/coronatest.ttl"
+cd java
+# mvn exec:java -D"exec.mainClass"="FilterTriples"
+mvn exec:java -D"exec.mainClass"="FilterTriples" -Dexec.args=$filename
+cd ..
+# generate file with entities
+python3 ER.py
