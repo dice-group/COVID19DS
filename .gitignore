@@ -1,2 +1,12 @@
 __pycache__/*
 nif/__pycache__/*
+java/*
+rdf/*
+document_parses/*
+docs/*
+bioRdfIndexer/*
+document_parses/*
+example_parses/*
+cache/*
+entityRecognition/*
+*.gz
