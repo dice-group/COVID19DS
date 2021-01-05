@@ -259,14 +259,20 @@ def handleFile(filename):
 
     # sameAs linking
     if pmcid:
-        g.add( (dice, OWL.sameAs, URIRef("http://ns.inria.fr/covid19/"+pmcid)) )
-        g.add( (dice, OWL.sameAs, URIRef("https://www.ncbi.nlm.nih.gov/pmc/articles/"+pmcid)) )
+        arr = pmcid.split(";")
+        for item in arr:
+            item = item.strip()
+            g.add( (dice, OWL.sameAs, URIRef("http://ns.inria.fr/covid19/"+item)) )
+            g.add( (dice, OWL.sameAs, URIRef("https://www.ncbi.nlm.nih.gov/pmc/articles/"+item)) )
     if sha:
-        g.add( (dice, OWL.sameAs, URIRef("http://ns.inria.fr/covid19/"+sha)) )    
-        g.add( (dice, OWL.sameAs, URIRef("http://pubannotation.org/docs/sourcedb/CORD-19/sourceid/"+sha)) )
-        g.add( (dice, OWL.sameAs, URIRef("https://data.linkeddatafragments.org/covid19?object=http%3A%2F%2Fidlab.github.io%2Fcovid19%23"+sha)) )
-        g.add( (dice, OWL.sameAs, URIRef("https://fhircat.org/cord-19/fhir/PMC/Composition/"+sha+".ttl")) )
-        g.add( (dice, RDFS.seeAlso, URIRef("https://fhircat.org/cord-19/fhir/PMC/Composition/"+sha+".json")) )
+        arr = sha.split(";")
+        for item in arr:
+            item = item.strip()
+            g.add( (dice, OWL.sameAs, URIRef("http://ns.inria.fr/covid19/"+item)) )    
+            g.add( (dice, OWL.sameAs, URIRef("http://pubannotation.org/docs/sourcedb/CORD-19/sourceid/"+item)) )
+            g.add( (dice, OWL.sameAs, URIRef("https://data.linkeddatafragments.org/covid19?object=http%3A%2F%2Fidlab.github.io%2Fcovid19%23"+item)) )
+            g.add( (dice, OWL.sameAs, URIRef("https://fhircat.org/cord-19/fhir/PMC/Composition/"+item+".ttl")) )
+            g.add( (dice, RDFS.seeAlso, URIRef("https://fhircat.org/cord-19/fhir/PMC/Composition/"+item+".json")) )
 
 
     # the provenance
