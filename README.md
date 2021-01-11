@@ -26,6 +26,11 @@ To run entity recognition on generated ttl file:
 ```
 filename - the path to the ttl file
 
+Here in the repository there are several scripts from different datasets connected to the Covid19. Everything that is relared to the main dataset is in the root folder. Scripts for other datasets are stored in the folders according to their names. Now there are avalable scripts for the following datasets:
+- unified_covid19 (https://github.com/CSSEGISandData/COVID-19_Unified-Dataset)     
+-
+-
+
 ## Namespaces
 
 Below we use the following namespaces:

@@ -10,3 +10,7 @@ example_parses/*
 cache/*
 entityRecognition/*
 *.gz
+unified_covid19/*.RData
+unified_covid19/*.csv
+unified_covid19/*.ttl
+unified_covid19/test.py
