@@ -30,6 +30,7 @@ Here in the repository there are several scripts from different datasets connect
 - unified_covid19 (https://github.com/CSSEGISandData/COVID-19_Unified-Dataset)     
 - acaps-covid19-government-measures (https://data.humdata.org/m/dataset/acaps-covid19-government-measures-dataset)
 - PolicyMap_NYT_COVID_Risk_Index (https://www.policymap.com/download-covid19-data/)
+- covid-19-global-travel-restrictions-and-airline-information (https://data.humdata.org/dataset/covid-19-global-travel-restrictions-and-airline-information)
 
 ## Namespaces
 
