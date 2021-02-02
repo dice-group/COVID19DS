@@ -65,9 +65,10 @@ def handleFile():
         for heading in row:
             heading = str(heading)
 
+            # strName = str(row['iso3'].split(',')[0].strip())
             strName = str(row['ObjectId'])
             # snakecase to lowerCamelCase
-            strCamelCase = re.sub(r"_(\w)", repl, strName) 
+            strCamelCase = re.sub(r"_(\w)", repl, strName)+"_AirlineRestrictions" 
 
             dice = URIRef(ctr+strCamelCase)
 
@@ -93,13 +94,54 @@ def handleFile():
                 metaobject = Literal(row[heading],datatype=XSD.date)
             
             if row[heading] != "" and heading != "X" and heading != "Y":
-                g.add( (dice, RDF.type, cvdo.RiskTravelRestrictions) )
+                g.add( (dice, RDF.type, cvdo.AirlineRestrictions) )
                 g.add( (dice, metapredicate, metaobject) )
 
-    print('Metadata csv has finished')
+    print('COVID-19 airline restrictions information has finished')
 
+    #Data WFP Coronavirus COVID-19 Travel Restrictions - COVID-19 travel restrictions by country.csv
+    for row in reader1:
+        longitude = None
+        latitude = None
+        for heading in row:
+            heading = str(heading)
+
+            # strName = str(row['iso3'].split(',')[0].strip())
+            strName = str(row['ObjectId'])
+            # snakecase to lowerCamelCase
+            strCamelCase = re.sub(r"_(\w)", repl, strName)+"_TravelRestrictions"
+
+            dice = URIRef(ctr+strCamelCase)
+
+            headingLower = heading.lower()
+            strCamelCase = re.sub(r"_(\w)", repl, headingLower)
+            metapredicate = ctr[strCamelCase]
+            metaobject = Literal(row[heading],datatype=XSD.string)
+
+            if heading == 'X':
+                longitude = row[heading]
+            if heading == 'Y':
+                latitude = row[heading]
+            if longitude is not None and latitude is not None and longitude != '' and latitude != '':
+                g.add( (dice, geo.geometry, Literal('POINT('+str(latitude)+' '+str(longitude)+')', datatype=virtrdf.Geometry)) )
+
+            if heading == 'ObjectId':
+                metaobject = Literal(row[heading],datatype=XSD.nonNegativeInteger)
+
+            if heading == 'source' and "http" in row[heading]:
+                metaobject = URIRef(row[heading])
+
+            if heading == "published":
+                metaobject = Literal(row[heading],datatype=XSD.date)
+            
+            if row[heading] != "" and heading != "X" and heading != "Y":
+                g.add( (dice, RDF.type, cvdo.TravelRestrictions) )
+                g.add( (dice, metapredicate, metaobject) )
+
+    print('COVID-19 travel restrictions by country has finished')
 
 reader = pd.read_csv('Data WFP Coronavirus COVID-19 Travel Restrictions - COVID-19 airline restrictions information.csv', keep_default_na=False).to_dict('records', into=OrderedDict)
+reader1 = pd.read_csv('Data WFP Coronavirus COVID-19 Travel Restrictions - COVID-19 travel restrictions by country.csv', keep_default_na=False).to_dict('records', into=OrderedDict)
 
 def isnan(value):
     try:
