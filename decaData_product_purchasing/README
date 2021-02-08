@@ -1,0 +1,17 @@
+Product Purchasing Behavior, COVID19 Emergency Index DecaData.	
+Products purchasing data in response to the announcement of the pandemic, Specifically Hand Sanitizers/Bath Tissue/Household cleaning products/Face masks. The data is encoded at a zipcode / day level from our panel of 500+ stores and goes back five years for comparison.
+
+Dataset from http://decadata.io/. 
+
+10 Column Data Set:
+    DATE YYYY-MM-DD
+    STORE_ZIP_CODE 5 digit
+    UPC (8-12 digit integer)
+    QTY - Amount Purchased (Integer can be negative if a refund)
+    NET_SALES ($ paid by customer including discounts and promotions)
+    GROSS_SALES ($ paid by customer excluding discounts)
+    BRAND (String)
+    PRODUCT_DESCRIPTION (String)
+    SUB_CATEGORY (String)
+    PERSONA (String)
+
