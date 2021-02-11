@@ -8,6 +8,7 @@ import csv
 import pandas as pd
 from collections import OrderedDict, defaultdict
 import pyreadr
+import zipcodes
 
 
 g = Graph()
@@ -52,7 +53,7 @@ def handleFile():
 	g.namespace_manager.bind("virtrdf", virtrdf)
 	g.namespace_manager.bind("geo", geo)
 	g.namespace_manager.bind("ctrp", ctr)
-	g.namespace_manager.bind("dbpedia-owl", dowl)
+	g.namespace_manager.bind("dbpediaOwl", dowl)
 
 
 	dice = None
@@ -75,17 +76,29 @@ def handleFile():
 			metaobject = Literal(row[heading],datatype=XSD.string)
 
 			if heading == 'QTY' or heading == 'UPC':
-			    metaobject = Literal(row[heading],datatype=XSD.integer)
+				metaobject = Literal(row[heading],datatype=XSD.integer)
 
 			if heading == 'STORE_ZIP_CODE':
 				metapredicate = dowl.postalCode
 				metaobject = Literal(row[heading],datatype=XSD.integer)
 
+				if row[heading] != "":
+					zipcodeInfo = zipcodes.matching(str(row[heading]))
+					# print(zipcodeInfo[0]['country'])
+					# Country
+					adm = zipcodeInfo[0]['country']
+					g.add( (dice, ctr.hasCountry, cvdo[adm]) )
+					g.add( (dice, ctr.hasCity, Literal(zipcodeInfo[0]['city'],datatype=XSD.string)) ) # city
+					g.add( (dice, ctr.hasCounty, Literal(zipcodeInfo[0]['county'],datatype=XSD.string)) ) # county
+					g.add( (dice, geo.geometry, Literal('POINT('+zipcodeInfo[0]['lat']+' '+zipcodeInfo[0]['long']+')', datatype=virtrdf.Geometry)) ) # lat lon
+					g.add( (cvdo[adm], RDF.type, dowl.Country) )
+					g.add( (cvdo[adm], cvdo.countryName, Literal(adm,datatype=XSD.string)) )
+
 			if heading == 'NET_SALES' or heading == 'GROSS_SALES':
-			    metaobject = Literal(row[heading],datatype=XSD.float)
+				metaobject = Literal(row[heading],datatype=XSD.float)
 
 			if heading == "DATE":
-			    metaobject = Literal(row[heading],datatype=XSD.date)
+				metaobject = Literal(row[heading],datatype=XSD.date)
 			
 			if row[heading] != "":
 				g.add( (dice, RDF.type, cvdo.ProductPurchasing) )
