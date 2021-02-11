@@ -99,10 +99,10 @@ def handleFile():
 				g.add( (dice, RDF.type, cvdo.GeospatialData) )
 				g.add( (dice, metapredicate, metaobject) )
 			# the provenance
-			g.add( (dice, prov.hadPrimarySource, cvdo.covid19Dataset) )
-			g.add( (cvdo.covid19Dataset, RDF.type, prov.Entity) )
+			g.add( (dice, prov.hadPrimarySource, cvdo.UnifiedCovidDataset) )
+			g.add( (cvdo.UnifiedCovidDataset, RDF.type, prov.Entity) )
 			# g.add( (cvdo.covid19Dataset, prov.generatedAtTime, Literal("2020-05-21T02:52:02Z",datatype=XSD.dateTime)) )
-			g.add( (cvdo.covid19Dataset, prov.wasDerivedFrom, Literal("https://github.com/CSSEGISandData/COVID-19_Unified-Dataset",datatype=XSD.string)) )
+			g.add( (cvdo.UnifiedCovidDataset, prov.wasDerivedFrom, Literal("https://github.com/CSSEGISandData/COVID-19_Unified-Dataset",datatype=XSD.string)) )
 
 
 	print('Csv has finished') 

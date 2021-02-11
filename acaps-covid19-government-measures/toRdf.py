@@ -25,6 +25,7 @@ dbpprop = Namespace("http://dbpedia.org/property/")
 dbpediaOwl = Namespace("http://dbpedia.org/ontology/")
 dcmi = Namespace("http://purl.org/dc/terms/")
 earth = Namespace("http://linked.earth/ontology/")
+prov = Namespace("http://www.w3.org/ns/prov#")
 
 
 
@@ -35,6 +36,7 @@ g.namespace_manager.bind("vcard", vcard)
 g.namespace_manager.bind("dbpediaOwl",dbpediaOwl)
 g.namespace_manager.bind("dcmi",dcmi)
 g.namespace_manager.bind("earth",earth)
+g.namespace_manager.bind("prov", prov)
 
 
 # Load the CSV data as a pandas Dataframe.
@@ -57,9 +59,12 @@ csv_data = csv_data.fillna("unknown")
 # Loop through the CSV data, and then make RDF triples.
 for index, row in csv_data.iterrows():
 
-
-    
-     g.add((URIRef(cvdr[str(row["ID"])]), cvdo.hasISO, Literal(row["ISO"], datatype=XSD.string)))
+     iso = row["ISO"]
+     g.add( (dice, cvdo.hasISO, cvdo[iso]) )
+     g.add( (cvdo[iso], RDF.type, cvdo.Iso) )
+     g.add( (cvdo[iso], dowl.isoCodeRegion, Literal(row["ISO"], datatype=XSD.string)) )
+     # g.add((URIRef(cvdr[str(row["ID"])]), cvdo.hasISO, Literal(row["ISO"], datatype=XSD.string)))
+     
      g.add((URIRef(cvdr[str(row["ID"])]), RDF.type, cvdo.Covid19Measure))
      #g.add((cvdr.ISO, RDF.type, lgdo.Feature))
      
@@ -94,6 +99,12 @@ for index, row in csv_data.iterrows():
      
      row['Alternative source']=urllib.parse.quote_plus(row['Alternative source'])
      g.add((URIRef(cvdr[str(row['ID'])]), cvdo.alternativeSource, URIRef(row['Alternative source'])))
+
+     # the provenance
+     g.add( (dice, prov.hadPrimarySource, cvdo.GovMeasuresCovidDataset) )
+     g.add( (cvdo.GovMeasuresCovidDataset, RDF.type, prov.Entity) )
+     g.add( (cvdo.GovMeasuresCovidDataset, prov.wasDerivedFrom, Literal("https://data.humdata.org/dataset/acaps-covid19-government-measures-dataset",datatype=XSD.string)) )
+
      
      # Remove the triples that I marked as "unknown"
      g.remove((None, None, URIRef("unknown")))
@@ -101,4 +112,4 @@ for index, row in csv_data.iterrows():
      g.remove((None, None, Literal("unknown",datatype=XSD.integer)))
      g.remove((None, None, Literal("unknown",datatype=XSD.date)))
      
-g.serialize(destination='my_graph.ttl', format='ttl')
+g.serialize(destination='my_graph_final.ttl', format='ttl')

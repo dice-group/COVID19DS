@@ -29,6 +29,7 @@ FOAF = Namespace('http://xmlns.com/foaf/0.1/')
 virtrdf = Namespace('http://www.openlinksw.com/schemas/virtrdf#')
 geo = Namespace('http://www.opengis.net/ont/geosparql#')
 ctr = Namespace("https://covid-19ds.data.dice-research.org/covidTravelRestrictions#")
+dowl = Namespace('http://dbpedia.org/ontology/')
 
 
 def handleFile():
@@ -52,6 +53,7 @@ def handleFile():
     g.namespace_manager.bind("virtrdf", virtrdf)
     g.namespace_manager.bind("geo", geo)
     g.namespace_manager.bind("ctrp", ctr)
+    g.namespace_manager.bind("dbpediaOwl", dowl)
 
 
     # metadata
@@ -87,15 +89,34 @@ def handleFile():
             if heading == 'ObjectId':
                 metaobject = Literal(row[heading],datatype=XSD.nonNegativeInteger)
 
+            if heading == "iso3":
+               iso = row[heading].split(',')
+               for isoitem in iso:
+                   isoitem = isoitem.strip()
+                   g.add( (dice, metapredicate, cvdo[isoitem]) )
+                   g.add( (cvdo[isoitem], RDF.type, cvdo.Iso) )
+                   g.add( (cvdo[isoitem], dowl.isoCodeRegion, metaobject) )
+
+            if heading == "adm0_name":
+               adm = capitalizeWords(row[heading])
+               g.add( (dice, metapredicate, cvdo[adm]) )
+               g.add( (cvdo[adm], RDF.type, dowl.Country) )
+               g.add( (cvdo[adm], cvdo.countryName, metaobject) )
+
             if heading == 'source' and "http" in row[heading]:
                 metaobject = URIRef(row[heading])
 
             if heading == "published":
                 metaobject = Literal(row[heading],datatype=XSD.date)
             
-            if row[heading] != "" and heading != "X" and heading != "Y":
+            if row[heading] != "" and heading != "X" and heading != "Y" and heading != "iso3" and heading != "adm0_name":
                 g.add( (dice, RDF.type, cvdo.AirlineRestrictions) )
                 g.add( (dice, metapredicate, metaobject) )
+
+            # the provenance
+            g.add( (dice, prov.hadPrimarySource, cvdo.AirlineRestrictionsCovidDataset) )
+            g.add( (cvdo.AirlineRestrictionsCovidDataset, RDF.type, prov.Entity) )
+            g.add( (cvdo.AirlineRestrictionsCovidDataset, prov.wasDerivedFrom, Literal("https://data.humdata.org/dataset/covid-19-global-travel-restrictions-and-airline-information",datatype=XSD.string)) )
 
     print('COVID-19 airline restrictions information has finished')
 
@@ -128,15 +149,35 @@ def handleFile():
             if heading == 'ObjectId':
                 metaobject = Literal(row[heading],datatype=XSD.nonNegativeInteger)
 
+            if heading == "iso3":
+               iso = row[heading].split(',')
+               for isoitem in iso:
+                   isoitem = isoitem.strip()
+                   g.add( (dice, metapredicate, cvdo[isoitem]) )
+                   g.add( (cvdo[isoitem], RDF.type, cvdo.Iso) )
+                   g.add( (cvdo[isoitem], dowl.isoCodeRegion, metaobject) )
+
+            if heading == "adm0_name":
+               adm = capitalizeWords(row[heading])
+               g.add( (dice, metapredicate, cvdo[adm]) )
+               g.add( (cvdo[adm], RDF.type, dowl.Country) )
+               g.add( (cvdo[adm], cvdo.countryName, metaobject) )
+
             if heading == 'source' and "http" in row[heading]:
                 metaobject = URIRef(row[heading])
 
             if heading == "published":
                 metaobject = Literal(row[heading],datatype=XSD.date)
             
-            if row[heading] != "" and heading != "X" and heading != "Y":
+            if row[heading] != "" and heading != "X" and heading != "Y" and heading != "iso3" and heading != "adm0_name":
                 g.add( (dice, RDF.type, cvdo.TravelRestrictions) )
                 g.add( (dice, metapredicate, metaobject) )
+
+            # the provenance
+            g.add( (dice, prov.hadPrimarySource, cvdo.AirlineRestrictionsCovidDataset) )
+            g.add( (cvdo.AirlineRestrictionsCovidDataset, RDF.type, prov.Entity) )
+            g.add( (cvdo.AirlineRestrictionsCovidDataset, prov.wasDerivedFrom, Literal("https://data.humdata.org/dataset/covid-19-global-travel-restrictions-and-airline-information",datatype=XSD.string)) )
+
 
     print('COVID-19 travel restrictions by country has finished')
 
@@ -152,6 +193,9 @@ def isnan(value):
 
 def repl(m):
     return m.group(1).upper()
+
+def capitalizeWords(s):
+  return re.sub(r'\w+', lambda m:m.group(0).capitalize(), s).replace(" ", "")
 
 
 handleFile()

@@ -91,6 +91,12 @@ def handleFile():
 				g.add( (dice, RDF.type, cvdo.ProductPurchasing) )
 				g.add( (dice, metapredicate, metaobject) )
 
+			# the provenance
+			g.add( (dice, prov.hadPrimarySource, cvdo.ProductPurchasingCovidDataset) )
+			g.add( (cvdo.ProductPurchasingCovidDataset, RDF.type, prov.Entity) )
+			g.add( (cvdo.ProductPurchasingCovidDataset, prov.wasDerivedFrom, Literal("http://decadata.io/",datatype=XSD.string)) )
+
+
 	print('csv has finished')
 
 reader = pd.read_csv('COVID19_INDEX_SAMPLE_2020_09_07_20200907_200000_COVID19_INDEX_RDX_2020_09_07_20200907_200000.csv', delimiter="|", keep_default_na=False).to_dict('records', into=OrderedDict)
