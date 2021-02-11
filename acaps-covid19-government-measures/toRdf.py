@@ -26,6 +26,7 @@ dbpediaOwl = Namespace("http://dbpedia.org/ontology/")
 dcmi = Namespace("http://purl.org/dc/terms/")
 earth = Namespace("http://linked.earth/ontology/")
 prov = Namespace("http://www.w3.org/ns/prov#")
+dowl = Namespace("http://dbpedia.org/ontology/")
 
 
 
@@ -37,6 +38,7 @@ g.namespace_manager.bind("dbpediaOwl",dbpediaOwl)
 g.namespace_manager.bind("dcmi",dcmi)
 g.namespace_manager.bind("earth",earth)
 g.namespace_manager.bind("prov", prov)
+g.namespace_manager.bind("dbpediaOwl", dowl)
 
 
 # Load the CSV data as a pandas Dataframe.
@@ -60,7 +62,7 @@ csv_data = csv_data.fillna("unknown")
 for index, row in csv_data.iterrows():
 
      iso = row["ISO"]
-     g.add( (dice, cvdo.hasISO, cvdo[iso]) )
+     g.add( (cvdr[str(row["ID"])], cvdo.hasISO, cvdo[iso]) )
      g.add( (cvdo[iso], RDF.type, cvdo.Iso) )
      g.add( (cvdo[iso], dowl.isoCodeRegion, Literal(row["ISO"], datatype=XSD.string)) )
      # g.add((URIRef(cvdr[str(row["ID"])]), cvdo.hasISO, Literal(row["ISO"], datatype=XSD.string)))
@@ -91,7 +93,7 @@ for index, row in csv_data.iterrows():
      g.add((URIRef(cvdr[str(row['ID'])]), dcmi.date, Literal(row['DATE_IMPLEMENTED'], datatype=XSD.date)))
      
      g.add((URIRef(cvdr[str(row['ID'])]), cvdo.hasSource, Literal(row['SOURCE'],lang='en')))
-     g.add((URIRef(cvdr[str(row['ID'])]), cvdo.sourceType , Literal(row['SOURCE_TYPE'], datatype=XSD.string)))
+     g.add((URIRef(cvdr[str(row['ID'])]), cvdo.publisher , Literal(row['SOURCE_TYPE'], datatype=XSD.string)))
      
      row['LINK']=urllib.parse.quote_plus(row['LINK'])
      g.add((URIRef(cvdr[str(row['ID'])]), earth.hasLink, URIRef(row['LINK'])))
@@ -101,7 +103,7 @@ for index, row in csv_data.iterrows():
      g.add((URIRef(cvdr[str(row['ID'])]), cvdo.alternativeSource, URIRef(row['Alternative source'])))
 
      # the provenance
-     g.add( (dice, prov.hadPrimarySource, cvdo.GovMeasuresCovidDataset) )
+     g.add( (cvdr[str(row["ID"])], prov.hadPrimarySource, cvdo.GovMeasuresCovidDataset) )
      g.add( (cvdo.GovMeasuresCovidDataset, RDF.type, prov.Entity) )
      g.add( (cvdo.GovMeasuresCovidDataset, prov.wasDerivedFrom, Literal("https://data.humdata.org/dataset/acaps-covid19-government-measures-dataset",datatype=XSD.string)) )
 
