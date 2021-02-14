@@ -11,6 +11,7 @@ from rdflib.namespace import RDF, FOAF, RDFS, OWL, DCTERMS, SKOS, XSD
 import pandas as pd
 import urllib.parse
 import urllib
+import re
 
 
 g = Graph()
@@ -42,7 +43,8 @@ g.namespace_manager.bind("dbpediaOwl", dowl)
 
 
 # Load the CSV data as a pandas Dataframe.
-csv_data = pd.read_excel("acaps_covid19_government_measures_dataset.xlsx")
+xls = pd.ExcelFile('acaps_covid19_government_measures_dataset.xlsx')
+csv_data = pd.read_excel(xls, 'Dataset')
 
 print(csv_data.head())
 print(csv_data.count())
@@ -95,12 +97,28 @@ for index, row in csv_data.iterrows():
      g.add((URIRef(cvdr[str(row['ID'])]), cvdo.hasSource, Literal(row['SOURCE'],lang='en')))
      g.add((URIRef(cvdr[str(row['ID'])]), cvdo.publisher , Literal(row['SOURCE_TYPE'], datatype=XSD.string)))
      
-     row['LINK']=urllib.parse.quote_plus(row['LINK'])
-     g.add((URIRef(cvdr[str(row['ID'])]), earth.hasLink, URIRef(row['LINK'])))
+     row['LINK'] = row['LINK'].strip()
+     if " " in row['LINK']:
+          row['LINK']=urllib.parse.quote_plus(row['LINK'])
+
+     g.add((URIRef(cvdr[str(row['ID'])]), cvdo.hasSourceLink, URIRef(row['LINK'])))
      g.add((URIRef(cvdr[str(row['ID'])]), cvdo.entryDate, Literal(row['ENTRY_DATE'], datatype=XSD.date)))
      
-     row['Alternative source']=urllib.parse.quote_plus(row['Alternative source'])
-     g.add((URIRef(cvdr[str(row['ID'])]), cvdo.alternativeSource, URIRef(row['Alternative source'])))
+     # row['Alternative source']=urllib.parse.quote_plus(row['Alternative source'])
+     altSources = None
+
+     altSources = re.split(';| \+| AND| and', row['Alternative source'])
+
+
+     if altSources:
+          for a in altSources:
+               # if a != 'and' and a != 'AND' and a != '':
+               g.add((URIRef(cvdr[str(row['ID'])]), cvdo.alternativeSource, URIRef(a.strip().replace(" ", ""))))
+     else:
+          if "http" in row['Alternative source']:
+               g.add((URIRef(cvdr[str(row['ID'])]), cvdo.alternativeSource, URIRef(row['Alternative source'].strip())))
+          else:
+               g.add((URIRef(cvdr[str(row['ID'])]), cvdo.alternativeSource, Literal(row['Alternative source'], datatype=XSD.string))) 
 
      # the provenance
      g.add( (cvdr[str(row["ID"])], prov.hadPrimarySource, cvdo.GovMeasuresCovidDataset) )
