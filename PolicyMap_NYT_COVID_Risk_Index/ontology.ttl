@@ -1,0 +1,102 @@
+@prefix crip: <https://covid-19ds.data.dice-research.org/covidRiskIndex#> .
+@prefix cvdo: <https://covid-19ds.data.dice-research.org/ontology/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+crip:geoBoundaryDefinitionId a cvdo:RiskIndexMetadata ;
+    crip:columnName "geo_boundary_definition_id"^^xsd:string ;
+    crip:decimalPlaces "3"^^xsd:string ;
+    crip:description "geographic level vintage"^^xsd:string ;
+    crip:fullLabel "geographic level vintage"^^xsd:string ;
+    crip:indicatorType "text"^^xsd:string ;
+    crip:shortLabel "geographic level vintage"^^xsd:string .
+
+crip:geoBoundaryIdentifier a cvdo:RiskIndexMetadata ;
+    crip:columnName "geo_boundary_identifier"^^xsd:string ;
+    crip:decimalPlaces "15"^^xsd:string ;
+    crip:description "FIPS code or zip code"^^xsd:string ;
+    crip:fullLabel "FIPS code or zip code"^^xsd:string ;
+    crip:indicatorType "text"^^xsd:string ;
+    crip:shortLabel "FIPS code or zip code"^^xsd:string .
+
+crip:geoBoundaryTypeId a cvdo:RiskIndexMetadata ;
+    crip:columnName "geo_boundary_type_id"^^xsd:string ;
+    crip:decimalPlaces "3"^^xsd:string ;
+    crip:description "geographic level"^^xsd:string ;
+    crip:fullLabel "geographic level"^^xsd:string ;
+    crip:indicatorType "text"^^xsd:string ;
+    crip:shortLabel "geographic level"^^xsd:string .
+
+crip:indexCategory a cvdo:RiskIndexMetadata ;
+    crip:columnName "index_category"^^xsd:string ;
+    crip:columnType "indicator"^^xsd:string ;
+    crip:dataSourceDescription "Created by PolicyMap for the New York Times, May 2020."^^xsd:string ;
+    crip:dataSourceName "PolicyMap for the New York Times"^^xsd:string ;
+    crip:decimalPlaces "13"^^xsd:string ;
+    crip:description "Severe COVID-19 health risk index in 2020. PolicyMap created this index for the New York Times. It represents the relative risk for a high proportion of residents in a given area to develop serious health complications from COVID-19 because of underlying health conditions identified by the CDC as contributing to a person's risk of developing severe symptoms from the virus. These conditions include COPD, heart disease, high blood pressure, diabetes, and obesity. Estimates of COPD, heart disease, and high blood pressure prevalence are from PolicyMap's Health Outcome Estimates. Estimates of diabetes and obesity prevalence are from the CDC's U.S. Diabetes Surveillance System. The normalized score represents a sum of the share of the adult population ever diagnosed with each health condition. It should not be interpreted as a percentage of people affected by the five conditions, since these shares are not mutually exlusive; those diagnosed with two or more conditions count two or more times. Because these values are normalized by adult population, however, they can be used to compare overall risk between areas with different populations. Normalized scores were then converted to z scores. A county's z score shows how many standard deviations above or below the average a county's risk level falls. A score of 0.6, for example, would mean that the county has a higher risk than average, but is still within one standard deviation of the average and is therefore not unusually high. Risk categories are assigned based on z scores."^^xsd:string ;
+    crip:fullLabel "Severe COVID-19 health risk index in 2020."^^xsd:string ;
+    crip:indicatorType "text"^^xsd:string ;
+    crip:periodBegin "2020-01-01 00:00"^^xsd:string ;
+    crip:shortLabel "Severe COVID-19 Health Risk Index"^^xsd:string .
+
+crip:indexNormalized a cvdo:RiskIndexMetadata ;
+    crip:columnName "index_normalized"^^xsd:string ;
+    crip:columnType "indicator"^^xsd:string ;
+    crip:dataSourceDescription "Created by PolicyMap for the New York Times, May 2020."^^xsd:string ;
+    crip:dataSourceName "PolicyMap for the New York Times"^^xsd:string ;
+    crip:decimalPlaces "8,2"^^xsd:string ;
+    crip:description "COVID-19 risk index normalized by adult population in 2020. PolicyMap created this index for the New York Times. It represents the relative risk for a high proportion of residents in a given area to develop serious health complications from COVID-19 because of underlying health conditions identified by the CDC as contributing to a person's risk of developing severe symptoms from the virus. These conditions include COPD, heart disease, high blood pressure, diabetes, and obesity. Estimates of COPD, heart disease, and high blood pressure prevalence are from PolicyMap's Health Outcome Estimates. Estimates of diabetes and obesity prevalence are from the CDC's U.S. Diabetes Surveillance System."^^xsd:string ;
+    crip:fullLabel "COVID-19 risk index normalized by adult population in 2020."^^xsd:string ;
+    crip:indicatorType "number"^^xsd:string ;
+    crip:periodBegin "2020-01-01 00:00"^^xsd:string ;
+    crip:shortLabel "Normalized COVID-19 Index"^^xsd:string .
+
+crip:indexPercentile a cvdo:RiskIndexMetadata ;
+    crip:columnName "index_percentile"^^xsd:string ;
+    crip:columnType "indicator"^^xsd:string ;
+    crip:dataSourceDescription "Created by PolicyMap for the New York Times, May 2020."^^xsd:string ;
+    crip:dataSourceName "PolicyMap for the New York Times"^^xsd:string ;
+    crip:decimalPlaces "6,2"^^xsd:string ;
+    crip:description "COVID-19 risk index (percentile) in 2020. PolicyMap created this index for the New York Times. It represents the relative risk for a high proportion of residents in a given area to develop serious health complications from COVID-19 because of underlying health conditions identified by the CDC as contributing to a person's risk of developing severe symptoms from the virus. These conditions include COPD, heart disease, high blood pressure, diabetes, and obesity. Estimates of COPD, heart disease, and high blood pressure prevalence are from PolicyMap's Health Outcome Estimates. Estimates of diabetes and obesity prevalence are from the CDC's U.S. Diabetes Surveillance System. The normalized score represents a sum of the share of the adult population ever diagnosed with each health condition. It should not be interpreted as a percentage of people affected by the five conditions, since these shares are not mutually exlusive; those diagnosed with two or more conditions count two or more times. Because these values are normalized by adult population, however, they can be used to compare overall risk between areas with different populations. Normalized scores were then assigned percentile rankings. These values rank counties from the lowest score to the highest on a scale of 0 to 100, where a score of 50 represents the median value."^^xsd:string ;
+    crip:fullLabel "COVID-19 risk index (percentile) in 2020."^^xsd:string ;
+    crip:indicatorType "number"^^xsd:string ;
+    crip:periodBegin "2020-01-01 00:00"^^xsd:string ;
+    crip:shortLabel "COVID-19 Risk Index (Percentile)"^^xsd:string .
+
+crip:indexRaw a cvdo:RiskIndexMetadata ;
+    crip:columnName "index_raw"^^xsd:string ;
+    crip:columnType "indicator"^^xsd:string ;
+    crip:dataSourceDescription "Created by PolicyMap for the New York Times, May 2020."^^xsd:string ;
+    crip:dataSourceName "PolicyMap for the New York Times"^^xsd:string ;
+    crip:decimalPlaces "10"^^xsd:string ;
+    crip:description "Raw COVID-19 risk index in 2020. PolicyMap created this index for the New York Times. It represents the relative risk for a high proportion of residents in a given area to develop serious health complications from COVID-19 because of underlying health conditions identified by the CDC as contributing to a person's risk of developing severe symptoms from the virus. These conditions include COPD, heart disease, high blood pressure, diabetes, and obesity. Estimates of COPD, heart disease, and high blood pressure prevalence are from PolicyMap's Health Outcome Estimates. Estimates of diabetes and obesity prevalence are from the CDC's U.S. Diabetes Surveillance System. The raw score represents a sum of the estimated number of people ever diagnosed with each health condition. This raw score should not be interpreted as a number of people affected by the five conditions, since the numbers are not mutually exclusive; those diagnosed with two or more of these conditions are counted two or more times."^^xsd:string ;
+    crip:fullLabel "Raw COVID-19 risk index in 2020."^^xsd:string ;
+    crip:indicatorType "int"^^xsd:string ;
+    crip:periodBegin "2020-01-01 00:00"^^xsd:string ;
+    crip:shortLabel "Raw COVID-19 Risk Index"^^xsd:string .
+
+crip:indexZscore a cvdo:RiskIndexMetadata ;
+    crip:columnName "index_zscore"^^xsd:string ;
+    crip:columnType "indicator"^^xsd:string ;
+    crip:dataSourceDescription "Created by PolicyMap for the New York Times, May 2020."^^xsd:string ;
+    crip:dataSourceName "PolicyMap for the New York Times"^^xsd:string ;
+    crip:decimalPlaces "8,2"^^xsd:string ;
+    crip:description "COVID-19 risk index (z score) in 2020. PolicyMap created this index for the New York Times. It represents the relative risk for a high proportion of residents in a given area to develop serious health complications from COVID-19 because of underlying health conditions identified by the CDC as contributing to a person's risk of developing severe symptoms from the virus. These conditions include COPD, heart disease, high blood pressure, diabetes, and obesity. Estimates of COPD, heart disease, and high blood pressure prevalence are from PolicyMap's Health Outcome Estimates. Estimates of diabetes and obesity prevalence are from the CDC's U.S. Diabetes Surveillance System. The normalized score represents a sum of the share of the adult population ever diagnosed with each health condition. It should not be interpreted as a percentage of people affected by the five conditions, since these shares are not mutually exlusive; those diagnosed with two or more conditions count two or more times. Because these values are normalized by adult population, however, they can be used to compare overall risk between areas with different populations. Normalized scores were then converted to z scores. A county's z score shows how many standard deviations above or below the average a county's risk level falls. A score of 0.6, for example, would mean that the county has a higher risk than average, but is still within one standard deviation of the average and is therefore not unusually high."^^xsd:string ;
+    crip:fullLabel "COVID-19 risk index (z score) in 2020."^^xsd:string ;
+    crip:indicatorType "number"^^xsd:string ;
+    crip:periodBegin "2020-01-01 00:00"^^xsd:string ;
+    crip:shortLabel "COVID-19 Risk Index (Z Score)"^^xsd:string .
+
+crip:timeFrame a cvdo:RiskIndexMetadata ;
+    crip:columnName "time_frame"^^xsd:string ;
+    crip:columnType "time_series"^^xsd:string ;
+    crip:dataSourceDescription "Created by PolicyMap for the New York Times, May 2020."^^xsd:string ;
+    crip:dataSourceName "PolicyMap for the New York Times"^^xsd:string ;
+    crip:decimalPlaces "4"^^xsd:string ;
+    crip:description "time frame"^^xsd:string,
+        "time frame time frame"^^xsd:string ;
+    crip:fullLabel "time frame"^^xsd:string ;
+    crip:indicatorType "int"^^xsd:string,
+        "varchar"^^xsd:string ;
+    crip:periodBegin "2020-01-01 00:00"^^xsd:string ;
+    crip:shortLabel "time frame"^^xsd:string .
+

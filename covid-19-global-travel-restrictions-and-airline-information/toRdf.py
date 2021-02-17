@@ -8,6 +8,7 @@ import csv
 import pandas as pd
 from collections import OrderedDict, defaultdict
 import pyreadr
+import pycountry
 
 
 g = Graph()
@@ -90,12 +91,15 @@ def handleFile():
                 metaobject = Literal(row[heading],datatype=XSD.nonNegativeInteger)
 
             if heading == "iso3":
-               iso = row[heading].split(',')
-               for isoitem in iso:
-                   isoitem = isoitem.strip()
-                   g.add( (dice, metapredicate, cvdo[isoitem]) )
-                   g.add( (cvdo[isoitem], RDF.type, cvdo.Iso) )
-                   g.add( (cvdo[isoitem], dowl.isoCodeRegion, metaobject) )
+                iso = row[heading].split(',')
+                for isoitem in iso:
+                    isoitem = isoitem.strip()
+                    g.add( (dice, metapredicate, cvdo[isoitem]) )
+                    g.add( (cvdo[isoitem], RDF.type, cvdo.Iso) )
+                    g.add( (cvdo[isoitem], cvdo.iso3, metaobject) )
+                    iso2 = pycountry.countries.get(alpha_3=row[heading])
+                    if iso2:
+                        g.add( (cvdo[isoitem], dowl.isoCodeRegion, Literal(iso2.alpha_2,datatype=XSD.string)) )
 
             if heading == "adm0_name":
                adm = capitalizeWords(row[heading])
@@ -155,7 +159,11 @@ def handleFile():
                    isoitem = isoitem.strip()
                    g.add( (dice, metapredicate, cvdo[isoitem]) )
                    g.add( (cvdo[isoitem], RDF.type, cvdo.Iso) )
-                   g.add( (cvdo[isoitem], dowl.isoCodeRegion, metaobject) )
+                   g.add( (cvdo[isoitem], cvdo.iso3, metaobject) )
+                   iso2 = pycountry.countries.get(alpha_3=row[heading])
+                   if iso2:
+                        g.add( (cvdo[isoitem], dowl.isoCodeRegion, Literal(iso2.alpha_2,datatype=XSD.string)) )
+
 
             if heading == "adm0_name":
                adm = capitalizeWords(row[heading])
