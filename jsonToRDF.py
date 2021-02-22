@@ -383,7 +383,7 @@ print(dirname1)
 num = 0
 
 chunks = None
-maxAmountOfFilesForOneIteration = 50000
+maxAmountOfFilesForOneIteration = 20000
 if len(os.listdir(dirname1)) > maxAmountOfFilesForOneIteration:
     data = os.listdir(dirname1)
     chunks = [data[x:x+maxAmountOfFilesForOneIteration] for x in range(0, len(data), maxAmountOfFilesForOneIteration)]

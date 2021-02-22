@@ -108,7 +108,7 @@ def handleFile():
 				metaobject = Literal(row[heading],datatype=XSD.float)
 
 			if heading == 'geo_boundary_identifier':
-				metapredicate = dowl.fopsCode
+				metapredicate = dowl.fipsCode
 				metaobject = Literal(row[heading],datatype=XSD.integer)
 
 				if row[heading] != "":
