@@ -124,7 +124,7 @@ def handleFile():
 					
 					g.add( (dice, cri.hasCountry, ndice.US) )
 					g.add( (ndice.US, RDF.type, dowl.Country) )
-					g.add( (ndice.US, cvdo.countryName, Literal('US',datatype=XSD.string)) )
+					g.add( (ndice.US, RDFS.label, Literal('US',datatype=XSD.string)) )
 			
 			if row[heading] != "":
 				g.add( (dice, RDF.type, cvdo.RiskIndexData) )

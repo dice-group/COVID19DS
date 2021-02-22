@@ -105,7 +105,7 @@ def handleFile():
                adm = capitalizeWords(row[heading])
                g.add( (dice, metapredicate, cvdo[adm]) )
                g.add( (cvdo[adm], RDF.type, dowl.Country) )
-               g.add( (cvdo[adm], cvdo.countryName, metaobject) )
+               g.add( (cvdo[adm], RDFS.label, metaobject) )
 
             if heading == 'source' and "http" in row[heading]:
                 metaobject = URIRef(row[heading])
@@ -169,7 +169,7 @@ def handleFile():
                adm = capitalizeWords(row[heading])
                g.add( (dice, metapredicate, cvdo[adm]) )
                g.add( (cvdo[adm], RDF.type, dowl.Country) )
-               g.add( (cvdo[adm], cvdo.countryName, metaobject) )
+               g.add( (cvdo[adm], RDFS.label, metaobject) )
 
             if heading == 'source' and "http" in row[heading]:
                 metaobject = URIRef(row[heading])

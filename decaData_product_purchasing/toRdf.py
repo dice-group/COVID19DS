@@ -92,7 +92,7 @@ def handleFile():
 					g.add( (dice, ctr.hasCounty, Literal(zipcodeInfo[0]['county'],datatype=XSD.string)) ) # county
 					g.add( (dice, geo.geometry, Literal('POINT('+zipcodeInfo[0]['lat']+' '+zipcodeInfo[0]['long']+')', datatype=virtrdf.Geometry)) ) # lat lon
 					g.add( (cvdo[adm], RDF.type, dowl.Country) )
-					g.add( (cvdo[adm], cvdo.countryName, Literal(adm,datatype=XSD.string)) )
+					g.add( (cvdo[adm], RDFS.label, Literal(adm,datatype=XSD.string)) )
 
 			if heading == 'NET_SALES' or heading == 'GROSS_SALES':
 				metaobject = Literal(row[heading],datatype=XSD.float)

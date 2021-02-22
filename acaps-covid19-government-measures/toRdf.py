@@ -18,8 +18,8 @@ g = Graph()
 
 
 
-cvdo = Namespace("https://covid-19ds.data/ontology/")  #(for Object)
-cvdr = Namespace("https://covid-19ds.data/resource/")  #(for Subject/Resource)
+cvdo = Namespace("https://covid-19ds.data.dice-research.org/ontology/")  #(for Object)
+cvdr = Namespace("https://covid-19ds.data.dice-research.org/resource/")  #(for Subject/Resource)
 lgdo = Namespace("http://linkedgeodata.org/page/ontology/")
 vcard = Namespace("http://www.w3.org/2006/vcard/ns#")
 dbpprop = Namespace("http://dbpedia.org/property/")
@@ -74,7 +74,7 @@ for index, row in csv_data.iterrows():
      
      g.add((URIRef(cvdr[str(row["ID"])]), cvdo.hasCountry, URIRef(cvdr[row["COUNTRY"]])))
     
-     g.add((URIRef(cvdr[str(row["COUNTRY"])]), cvdo.countryName, Literal(row["COUNTRY"], lang='en')))
+     g.add((URIRef(cvdr[str(row["COUNTRY"])]), RDFS.label, Literal(row["COUNTRY"], lang='en')))
      g.add((URIRef(cvdr[str(row["COUNTRY"])]), RDF.type, dbpediaOwl.Country))
 
      g.add((URIRef(cvdr[str(row["ID"])]), cvdo.hasRegion, Literal(row["REGION"], datatype=XSD.string)))     

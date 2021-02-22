@@ -23,8 +23,8 @@ its = Namespace("http://www.w3.org/2005/11/its/rdf#")
 sdo = Namespace("http://salt.semanticauthoring.org/ontologies/sdo#")
 bibo = Namespace("http://purl.org/ontology/bibo/")
 fabio = Namespace("http://purl.org/spar/fabio/")
-cvdo = Namespace("https://covid-19ds.data/ontology/")
-ndice = Namespace("https://covid-19ds.data/resource/") #cvdr
+cvdo = Namespace("https://covid-19ds.data.dice-research.org/ontology/")
+ndice = Namespace("https://covid-19ds.data.dice-research.org/resource/") #cvdr
 FOAF = Namespace('http://xmlns.com/foaf/0.1/')
 virtrdf = Namespace('http://www.openlinksw.com/schemas/virtrdf#')
 geo = Namespace('http://www.opengis.net/ont/geosparql#')
@@ -89,7 +89,7 @@ def handleFile():
 			   adm = capitalizeWords(row[heading])
 			   g.add( (dice, metapredicate, cvdo[adm]) )
 			   g.add( (cvdo[adm], RDF.type, dowl.Country) )
-			   g.add( (cvdo[adm], cvdo.countryName, metaobject) )
+			   g.add( (cvdo[adm], RDFS.label, metaobject) )
 			   
 
 			if heading == 'Population' or heading == 'Admin':
