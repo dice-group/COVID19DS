@@ -13,7 +13,7 @@ import pycountry
 
 g = Graph()
 ontology = "https://covid-19ds.data.dice-research.org/ontology/"
-resourse = "https://covid-19ds.data.dice-research.org/resource/"
+resource = "https://covid-19ds.data.dice-research.org/resource/"
 schema = Namespace("http://schema.org/")
 vcard = Namespace("http://www.w3.org/2006/vcard/ns#")
 bibtex = Namespace("http://purl.org/net/nknouf/ns/bibtex#") 
@@ -73,7 +73,7 @@ def handleFile():
             # snakecase to lowerCamelCase
             strCamelCase = re.sub(r"_(\w)", repl, strName)+"_AirlineRestrictions" 
 
-            dice = URIRef(ctr+strCamelCase)
+            dice = URIRef(resource+strCamelCase)
 
             headingLower = heading.lower()
             strCamelCase = re.sub(r"_(\w)", repl, headingLower)
@@ -136,7 +136,7 @@ def handleFile():
             # snakecase to lowerCamelCase
             strCamelCase = re.sub(r"_(\w)", repl, strName)+"_TravelRestrictions"
 
-            dice = URIRef(ctr+strCamelCase)
+            dice = URIRef(resource+strCamelCase)
 
             headingLower = heading.lower()
             strCamelCase = re.sub(r"_(\w)", repl, headingLower)

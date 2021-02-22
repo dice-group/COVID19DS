@@ -62,47 +62,48 @@ csv_data = csv_data.fillna("unknown")
 
 # Loop through the CSV data, and then make RDF triples.
 for index, row in csv_data.iterrows():
-
+     dice = str(row['ID'])+'_GovMeasure'
+     print(dice)
      iso = row["ISO"]
-     g.add( (cvdr[str(row["ID"])], cvdo.hasISO, cvdo[iso]) )
+     g.add( (cvdr[dice], cvdo.hasISO, cvdo[iso]) )
      g.add( (cvdo[iso], RDF.type, cvdo.Iso) )
      g.add( (cvdo[iso], dowl.isoCodeRegion, Literal(row["ISO"], datatype=XSD.string)) )
      # g.add((URIRef(cvdr[str(row["ID"])]), cvdo.hasISO, Literal(row["ISO"], datatype=XSD.string)))
      
-     g.add((URIRef(cvdr[str(row["ID"])]), RDF.type, cvdo.Covid19Measure))
+     g.add((URIRef(cvdr[dice]), RDF.type, cvdo.Covid19Measure))
      #g.add((cvdr.ISO, RDF.type, lgdo.Feature))
      
-     g.add((URIRef(cvdr[str(row["ID"])]), cvdo.hasCountry, URIRef(cvdr[row["COUNTRY"]])))
+     g.add((URIRef(cvdr[dice]), cvdo.hasCountry, URIRef(cvdr[row["COUNTRY"]])))
     
      g.add((URIRef(cvdr[str(row["COUNTRY"])]), RDFS.label, Literal(row["COUNTRY"], lang='en')))
      g.add((URIRef(cvdr[str(row["COUNTRY"])]), RDF.type, dbpediaOwl.Country))
 
-     g.add((URIRef(cvdr[str(row["ID"])]), cvdo.hasRegion, Literal(row["REGION"], datatype=XSD.string)))     
+     g.add((URIRef(cvdr[dice]), cvdo.hasRegion, Literal(row["REGION"], datatype=XSD.string)))     
 
-     g.add((URIRef(cvdr[str(row['ID'])]), cvdo.hasAdminLevelName, Literal(row['ADMIN_LEVEL_NAME'], datatype=XSD.string)))
+     g.add((URIRef(cvdr[dice]), cvdo.hasAdminLevelName, Literal(row['ADMIN_LEVEL_NAME'], datatype=XSD.string)))
      
-     g.add((URIRef(cvdr[str(row['ID'])]),  cvdo.hasPCODE, Literal(row['PCODE'], datatype=XSD.integer)))
+     g.add((URIRef(cvdr[dice]),  cvdo.hasPCODE, Literal(row['PCODE'], datatype=XSD.integer)))
      
-     g.add((URIRef(cvdr[str(row['ID'])]), cvdo.hasLogType, Literal(row['LOG_TYPE'], datatype=XSD.string)))
+     g.add((URIRef(cvdr[dice]), cvdo.hasLogType, Literal(row['LOG_TYPE'], datatype=XSD.string)))
      
-     g.add((URIRef(cvdr[str(row['ID'])]), dbpediaOwl.category, Literal(row['CATEGORY'], datatype=XSD.string)))
+     g.add((URIRef(cvdr[dice]), dbpediaOwl.category, Literal(row['CATEGORY'], datatype=XSD.string)))
      
-     g.add((URIRef(cvdr[str(row['ID'])]), cvdo.hasMeasure, Literal(row['MEASURE'], datatype=XSD.string)))
+     g.add((URIRef(cvdr[dice]), cvdo.hasMeasure, Literal(row['MEASURE'], datatype=XSD.string)))
      
-     g.add((URIRef(cvdr[str(row['ID'])]), cvdo.targetedPopGroup, Literal(row['TARGETED_POP_GROUP'], datatype=XSD.string)))
-     g.add((URIRef(cvdr[str(row['ID'])]), RDFS.comment, Literal(row['COMMENTS'], datatype=XSD.string)))
-     g.add((URIRef(cvdr[str(row['ID'])]), cvdo.nonCompliance, Literal(row['NON_COMPLIANCE'], datatype=XSD.string)))
-     g.add((URIRef(cvdr[str(row['ID'])]), dcmi.date, Literal(row['DATE_IMPLEMENTED'], datatype=XSD.date)))
+     g.add((URIRef(cvdr[dice]), cvdo.targetedPopGroup, Literal(row['TARGETED_POP_GROUP'], datatype=XSD.string)))
+     g.add((URIRef(cvdr[dice]), RDFS.comment, Literal(row['COMMENTS'], datatype=XSD.string)))
+     g.add((URIRef(cvdr[dice]), cvdo.nonCompliance, Literal(row['NON_COMPLIANCE'], datatype=XSD.string)))
+     g.add((URIRef(cvdr[dice]), dcmi.date, Literal(row['DATE_IMPLEMENTED'], datatype=XSD.date)))
      
-     g.add((URIRef(cvdr[str(row['ID'])]), cvdo.hasSource, Literal(row['SOURCE'],lang='en')))
-     g.add((URIRef(cvdr[str(row['ID'])]), cvdo.publisher , Literal(row['SOURCE_TYPE'], datatype=XSD.string)))
+     g.add((URIRef(cvdr[dice]), cvdo.hasSource, Literal(row['SOURCE'],lang='en')))
+     g.add((URIRef(cvdr[dice]), cvdo.publisher , Literal(row['SOURCE_TYPE'], datatype=XSD.string)))
      
      row['LINK'] = row['LINK'].strip()
      if " " in row['LINK']:
           row['LINK']=urllib.parse.quote_plus(row['LINK'])
 
-     g.add((URIRef(cvdr[str(row['ID'])]), cvdo.hasSourceLink, URIRef(row['LINK'])))
-     g.add((URIRef(cvdr[str(row['ID'])]), cvdo.entryDate, Literal(row['ENTRY_DATE'], datatype=XSD.date)))
+     g.add((URIRef(cvdr[dice]), cvdo.hasSourceLink, URIRef(row['LINK'])))
+     g.add((URIRef(cvdr[dice]), cvdo.entryDate, Literal(row['ENTRY_DATE'], datatype=XSD.date)))
      
      # row['Alternative source']=urllib.parse.quote_plus(row['Alternative source'])
      altSources = None
@@ -113,15 +114,15 @@ for index, row in csv_data.iterrows():
      if altSources:
           for a in altSources:
                # if a != 'and' and a != 'AND' and a != '':
-               g.add((URIRef(cvdr[str(row['ID'])]), cvdo.alternativeSource, URIRef(a.strip().replace(" ", ""))))
+               g.add((URIRef(cvdr[dice]), cvdo.alternativeSource, URIRef(a.strip().replace(" ", ""))))
      else:
           if "http" in row['Alternative source']:
-               g.add((URIRef(cvdr[str(row['ID'])]), cvdo.alternativeSource, URIRef(row['Alternative source'].strip())))
+               g.add((URIRef(cvdr[dice]), cvdo.alternativeSource, URIRef(row['Alternative source'].strip())))
           else:
-               g.add((URIRef(cvdr[str(row['ID'])]), cvdo.alternativeSource, Literal(row['Alternative source'], datatype=XSD.string))) 
+               g.add((URIRef(cvdr[dice]), cvdo.alternativeSource, Literal(row['Alternative source'], datatype=XSD.string))) 
 
      # the provenance
-     g.add( (cvdr[str(row["ID"])], prov.hadPrimarySource, cvdo.GovMeasuresCovidDataset) )
+     g.add( (cvdr[dice], prov.hadPrimarySource, cvdo.GovMeasuresCovidDataset) )
      g.add( (cvdo.GovMeasuresCovidDataset, RDF.type, prov.Entity) )
      g.add( (cvdo.GovMeasuresCovidDataset, prov.wasDerivedFrom, Literal("https://data.humdata.org/dataset/acaps-covid19-government-measures-dataset",datatype=XSD.string)) )
 
@@ -132,4 +133,4 @@ for index, row in csv_data.iterrows():
      g.remove((None, None, Literal("unknown",datatype=XSD.integer)))
      g.remove((None, None, Literal("unknown",datatype=XSD.date)))
      
-g.serialize(destination='my_graph_final.ttl', format='ttl')
+g.serialize(destination='acaps.ttl', format='ttl')
