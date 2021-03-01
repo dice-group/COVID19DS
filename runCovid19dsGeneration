@@ -42,10 +42,14 @@ now="$(date +'%Y-%m-%d')"
 fn=$db$now
 mkdir $fn
 mv /home/user/Documents/work/vos19/database/virtuoso.db $fn
+rm -rf /home/user/Documents/work/vos19/database/virtuoso.trx
+rm -rf /home/user/Documents/work/vos19/database/virtuoso.log
+rm -rf /home/user/Documents/work/vos19/database/virtuoso-temp.db
+rm -rf /home/user/Documents/work/vos19/database/virtuoso.pxa
 # run new virtuoso
 PASS=$DBA_PASSWORD
 docker run -d=true --rm --name COVID19DS -e DBA_PASSWORD=$PASS -it -v /home/user/Documents/work/vos19/database:/database -v /home/user/Documents/work/COVID19DS/$folderName:/rdfData -t -p 1111:1111 -p 8890:8890 -i openlink/virtuoso-opensource-7
 
 # upload new files
-sleep 1m
+sleep 2m
 docker exec -it COVID19DS bash -c "cd /opt/virtuoso-opensource/bin && ./isql 1111 dba $PASS < /rdfData/add.sql"
