@@ -98,7 +98,7 @@ def handleFile():
 
 			headingLower = heading.lower()
 			strCamelCase = re.sub(r"_(\w)", repl, headingLower)
-			metapredicate = cri[strCamelCase]
+			metapredicate = cvdo[strCamelCase]
 			metaobject = Literal(row[heading],datatype=XSD.string)
 
 			if heading == 'time_frame' or heading == 'index_raw':
@@ -116,19 +116,26 @@ def handleFile():
 
 					county_name = fipsTable[fipsTable["fips"] == fipsCD]['county_name']
 					if county_name.size != 0:
-						g.add( (dice, cri.hasCounty, Literal(county_name.values[0],datatype=XSD.string)) ) # county
+						g.add( (dice, cvdo.hasCounty, Literal(county_name.values[0],datatype=XSD.string)) ) # county
 					
 					state_name = fipsTable[fipsTable["fips"] == fipsCD]['state_name']
 					if state_name.size != 0:
-						g.add( (dice, cri.hasState, Literal(state_name.values[0],datatype=XSD.string)) ) # county
+						g.add( (dice, cvdo.hasState, Literal(state_name.values[0],datatype=XSD.string)) ) # county
 					
-					g.add( (dice, cri.hasCountry, ndice.US) )
+					g.add( (dice, cvdo.hasCountry, ndice.US) )
 					g.add( (ndice.US, RDF.type, dowl.Country) )
 					g.add( (ndice.US, RDFS.label, Literal('US',datatype=XSD.string)) )
 			
 			if row[heading] != "":
 				g.add( (dice, RDF.type, cvdo.RiskIndexData) )
 				g.add( (dice, metapredicate, metaobject) )
+
+			# the provenance
+			g.add( (dice, prov.hadPrimarySource, cvdo.RiskIndexDataCovidDataset) )
+			g.add( (cvdo.RiskIndexDataCovidDataset, RDF.type, prov.Entity) )
+			g.add( (cvdo.RiskIndexDataCovidDataset, prov.generatedAtTime, Literal("2021-02-22T02:52:02Z",datatype=XSD.dateTime)) )
+			g.add( (cvdo.RiskIndexDataCovidDataset, prov.wasDerivedFrom, Literal("https://www.policymap.com/download-covid19-data/",datatype=XSD.string)) )
+
 
 	print('Csv has finished') 
 

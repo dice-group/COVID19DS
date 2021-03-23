@@ -66,17 +66,20 @@ def handleFile():
 			heading = str(heading)
 
 			strName = str(rowNum)
-			strCamelCase = re.sub(r"_(\w)", repl, strName)+"_ProductPurchasing" 
+			strCamelCase = re.sub(r"_(\w)", repl, strName)+"_ProductPurchasingBehavior" 
 
 			dice = URIRef(resource+strCamelCase)
 
 			headingLower = heading.lower()
 			strCamelCase = re.sub(r"_(\w)", repl, headingLower)
-			metapredicate = ctr[strCamelCase]
+			metapredicate = cvdo[strCamelCase]
 			metaobject = Literal(row[heading],datatype=XSD.string)
 
 			if heading == 'QTY' or heading == 'UPC':
 				metaobject = Literal(row[heading],datatype=XSD.integer)
+
+			if heading == 'QTY':
+				metapredicate = cvdo.quantity
 
 			if heading == 'STORE_ZIP_CODE':
 				metapredicate = dowl.postalCode
@@ -87,9 +90,9 @@ def handleFile():
 					# print(zipcodeInfo[0]['country'])
 					# Country
 					adm = zipcodeInfo[0]['country']
-					g.add( (dice, ctr.hasCountry, cvdo[adm]) )
-					g.add( (dice, ctr.hasCity, Literal(zipcodeInfo[0]['city'],datatype=XSD.string)) ) # city
-					g.add( (dice, ctr.hasCounty, Literal(zipcodeInfo[0]['county'],datatype=XSD.string)) ) # county
+					g.add( (dice, cvdo.hasCountry, cvdo[adm]) )
+					g.add( (dice, cvdo.hasCity, Literal(zipcodeInfo[0]['city'],datatype=XSD.string)) ) # city
+					g.add( (dice, cvdo.hasCounty, Literal(zipcodeInfo[0]['county'],datatype=XSD.string)) ) # county
 					g.add( (dice, geo.geometry, Literal('POINT('+zipcodeInfo[0]['lat']+' '+zipcodeInfo[0]['long']+')', datatype=virtrdf.Geometry)) ) # lat lon
 					g.add( (cvdo[adm], RDF.type, dowl.Country) )
 					g.add( (cvdo[adm], RDFS.label, Literal(adm,datatype=XSD.string)) )
@@ -107,6 +110,7 @@ def handleFile():
 			# the provenance
 			g.add( (dice, prov.hadPrimarySource, cvdo.ProductPurchasingCovidDataset) )
 			g.add( (cvdo.ProductPurchasingCovidDataset, RDF.type, prov.Entity) )
+			g.add( (cvdo.ProductPurchasingCovidDataset, prov.generatedAtTime, Literal("2021-02-22T02:52:02Z",datatype=XSD.dateTime)) )
 			g.add( (cvdo.ProductPurchasingCovidDataset, prov.wasDerivedFrom, Literal("http://decadata.io/",datatype=XSD.string)) )
 
 

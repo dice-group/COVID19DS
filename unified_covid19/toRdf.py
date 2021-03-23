@@ -81,15 +81,18 @@ def handleFile():
 
 			if heading == "ISO1_3C":
 			   iso = row[heading]
-			   g.add( (dice, metapredicate, cvdo[iso]) )
+			   g.add( (dice, cvdo.hasISO3, cvdo[iso]) )
 			   g.add( (cvdo[iso], RDF.type, cvdo.Iso) )
 			   g.add( (cvdo[iso], dowl.isoCodeRegion, metaobject) )
 
 			if heading == "Admin0":
 			   adm = capitalizeWords(row[heading])
-			   g.add( (dice, metapredicate, cvdo[adm]) )
+			   g.add( (dice, cvdo.hasCountry, cvdo[adm]) )
 			   g.add( (cvdo[adm], RDF.type, dowl.Country) )
 			   g.add( (cvdo[adm], RDFS.label, metaobject) )
+
+			if heading == "Type":
+				metapredicate = cvdo.caseType
 			   
 
 			if heading == 'Population' or heading == 'Admin':
@@ -101,7 +104,7 @@ def handleFile():
 			# the provenance
 			g.add( (dice, prov.hadPrimarySource, cvdo.UnifiedCovidDataset) )
 			g.add( (cvdo.UnifiedCovidDataset, RDF.type, prov.Entity) )
-			# g.add( (cvdo.covid19Dataset, prov.generatedAtTime, Literal("2020-05-21T02:52:02Z",datatype=XSD.dateTime)) )
+			g.add( (cvdo.UnifiedCovidDataset, prov.generatedAtTime, Literal("2021-02-22T02:52:02Z",datatype=XSD.dateTime)) )
 			g.add( (cvdo.UnifiedCovidDataset, prov.wasDerivedFrom, Literal("https://github.com/CSSEGISandData/COVID-19_Unified-Dataset",datatype=XSD.string)) )
 
 
@@ -137,7 +140,7 @@ def handleFile():
 	for i in range(0, len(covid19data['ID'])):
 	    dice = URIRef(resourse+str(covid19data['ID'][i]))
 	    pol = 'Covid19Data_'+str(covid19data['ID'][i])+'_'+ covid19data['Type'][i]+'_'+str(covid19data['Date'][i])
-	    g.add( (dice, cvdo.hasCovidData, cvdo[pol]) )
+	    g.add( (dice, cvdo.hasCasesPerAgeRecord, cvdo[pol]) )
 	    g.add( (cvdo[pol], RDF.type, cvdo.CasesPerAgeRecord) )
 	    g.add( (cvdo[pol], cvdo.date, Literal(covid19data['Date'][i],datatype=XSD.date)) )
 	    g.add( (cvdo[pol], cvdo.type, Literal(covid19data['Type'][i],datatype=XSD.string)) )

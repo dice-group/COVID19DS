@@ -65,7 +65,7 @@ for index, row in csv_data.iterrows():
      dice = str(row['ID'])+'_GovMeasure'
      print(dice)
      iso = row["ISO"]
-     g.add( (cvdr[dice], cvdo.hasISO, cvdo[iso]) )
+     g.add( (cvdr[dice], cvdo.hasISO3, cvdo[iso]) )
      g.add( (cvdo[iso], RDF.type, cvdo.Iso) )
      g.add( (cvdo[iso], dowl.isoCodeRegion, Literal(row["ISO"], datatype=XSD.string)) )
      # g.add((URIRef(cvdr[str(row["ID"])]), cvdo.hasISO, Literal(row["ISO"], datatype=XSD.string)))
@@ -124,6 +124,7 @@ for index, row in csv_data.iterrows():
      # the provenance
      g.add( (cvdr[dice], prov.hadPrimarySource, cvdo.GovMeasuresCovidDataset) )
      g.add( (cvdo.GovMeasuresCovidDataset, RDF.type, prov.Entity) )
+     g.add( (cvdo.GovMeasuresCovidDataset, prov.generatedAtTime, Literal("2021-02-22T02:52:02Z",datatype=XSD.dateTime)) )
      g.add( (cvdo.GovMeasuresCovidDataset, prov.wasDerivedFrom, Literal("https://data.humdata.org/dataset/acaps-covid19-government-measures-dataset",datatype=XSD.string)) )
 
      

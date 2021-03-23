@@ -77,7 +77,7 @@ def handleFile():
 
             headingLower = heading.lower()
             strCamelCase = re.sub(r"_(\w)", repl, headingLower)
-            metapredicate = ctr[strCamelCase]
+            metapredicate = cvdo[strCamelCase]
             metaobject = Literal(row[heading],datatype=XSD.string)
 
             if heading == 'X':
@@ -94,7 +94,7 @@ def handleFile():
                 iso = row[heading].split(',')
                 for isoitem in iso:
                     isoitem = isoitem.strip()
-                    g.add( (dice, metapredicate, cvdo[isoitem]) )
+                    g.add( (dice, cvdo.hasISO3, cvdo[isoitem]) )
                     g.add( (cvdo[isoitem], RDF.type, cvdo.Iso) )
                     g.add( (cvdo[isoitem], cvdo.iso3, metaobject) )
                     iso2 = pycountry.countries.get(alpha_3=row[heading])
@@ -103,7 +103,7 @@ def handleFile():
 
             if heading == "adm0_name":
                adm = capitalizeWords(row[heading])
-               g.add( (dice, metapredicate, cvdo[adm]) )
+               g.add( (dice, cvdo.hasCountry, cvdo[adm]) )
                g.add( (cvdo[adm], RDF.type, dowl.Country) )
                g.add( (cvdo[adm], RDFS.label, metaobject) )
 
@@ -140,7 +140,7 @@ def handleFile():
 
             headingLower = heading.lower()
             strCamelCase = re.sub(r"_(\w)", repl, headingLower)
-            metapredicate = ctr[strCamelCase]
+            metapredicate = cvdo[strCamelCase]
             metaobject = Literal(row[heading],datatype=XSD.string)
 
             if heading == 'X':
@@ -157,7 +157,7 @@ def handleFile():
                iso = row[heading].split(',')
                for isoitem in iso:
                    isoitem = isoitem.strip()
-                   g.add( (dice, metapredicate, cvdo[isoitem]) )
+                   g.add( (dice, cvdo.hasISO3, cvdo[isoitem]) )
                    g.add( (cvdo[isoitem], RDF.type, cvdo.Iso) )
                    g.add( (cvdo[isoitem], cvdo.iso3, metaobject) )
                    iso2 = pycountry.countries.get(alpha_3=row[heading])
@@ -167,7 +167,7 @@ def handleFile():
 
             if heading == "adm0_name":
                adm = capitalizeWords(row[heading])
-               g.add( (dice, metapredicate, cvdo[adm]) )
+               g.add( (dice, cvdo.hasCountry, cvdo[adm]) )
                g.add( (cvdo[adm], RDF.type, dowl.Country) )
                g.add( (cvdo[adm], RDFS.label, metaobject) )
 
@@ -184,6 +184,7 @@ def handleFile():
             # the provenance
             g.add( (dice, prov.hadPrimarySource, cvdo.AirlineRestrictionsCovidDataset) )
             g.add( (cvdo.AirlineRestrictionsCovidDataset, RDF.type, prov.Entity) )
+            g.add( (cvdo.AirlineRestrictionsCovidDataset, prov.generatedAtTime, Literal("2021-02-22T02:52:02Z",datatype=XSD.dateTime)) )
             g.add( (cvdo.AirlineRestrictionsCovidDataset, prov.wasDerivedFrom, Literal("https://data.humdata.org/dataset/covid-19-global-travel-restrictions-and-airline-information",datatype=XSD.string)) )
 
 
