@@ -131,10 +131,10 @@ def handleFile():
 				g.add( (dice, metapredicate, metaobject) )
 
 			# the provenance
-			g.add( (dice, prov.hadPrimarySource, cvdo.RiskIndexDataCovidDataset) )
-			g.add( (cvdo.RiskIndexDataCovidDataset, RDF.type, prov.Entity) )
-			g.add( (cvdo.RiskIndexDataCovidDataset, prov.generatedAtTime, Literal("2021-02-22T02:52:02Z",datatype=XSD.dateTime)) )
-			g.add( (cvdo.RiskIndexDataCovidDataset, prov.wasDerivedFrom, Literal("https://www.policymap.com/download-covid19-data/",datatype=XSD.string)) )
+			g.add( (dice, prov.hadPrimarySource, ndice.RiskIndexDataCovidDataset) )
+			g.add( (ndice.RiskIndexDataCovidDataset, RDF.type, prov.Entity) )
+			g.add( (ndice.RiskIndexDataCovidDataset, prov.generatedAtTime, Literal("2021-02-22T02:52:02Z",datatype=XSD.dateTime)) )
+			g.add( (ndice.RiskIndexDataCovidDataset, prov.wasDerivedFrom, Literal("https://www.policymap.com/download-covid19-data/",datatype=XSD.string)) )
 
 
 	print('Csv has finished') 

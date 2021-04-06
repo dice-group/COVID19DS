@@ -65,9 +65,9 @@ for index, row in csv_data.iterrows():
      dice = str(row['ID'])+'_GovMeasure'
      print(dice)
      iso = row["ISO"]
-     g.add( (cvdr[dice], cvdo.hasISO3, cvdo[iso]) )
-     g.add( (cvdo[iso], RDF.type, cvdo.Iso) )
-     g.add( (cvdo[iso], dowl.isoCodeRegion, Literal(row["ISO"], datatype=XSD.string)) )
+     g.add( (cvdr[dice], cvdo.hasISO3, cvdr[iso]) )
+     g.add( (cvdr[iso], RDF.type, cvdo.Iso) )
+     g.add( (cvdr[iso], dowl.isoCodeRegion, Literal(row["ISO"], datatype=XSD.string)) )
      # g.add((URIRef(cvdr[str(row["ID"])]), cvdo.hasISO, Literal(row["ISO"], datatype=XSD.string)))
      
      g.add((URIRef(cvdr[dice]), RDF.type, cvdo.Covid19Measure))
@@ -122,10 +122,10 @@ for index, row in csv_data.iterrows():
                g.add((URIRef(cvdr[dice]), cvdo.alternativeSource, Literal(row['Alternative source'], datatype=XSD.string))) 
 
      # the provenance
-     g.add( (cvdr[dice], prov.hadPrimarySource, cvdo.GovMeasuresCovidDataset) )
-     g.add( (cvdo.GovMeasuresCovidDataset, RDF.type, prov.Entity) )
-     g.add( (cvdo.GovMeasuresCovidDataset, prov.generatedAtTime, Literal("2021-02-22T02:52:02Z",datatype=XSD.dateTime)) )
-     g.add( (cvdo.GovMeasuresCovidDataset, prov.wasDerivedFrom, Literal("https://data.humdata.org/dataset/acaps-covid19-government-measures-dataset",datatype=XSD.string)) )
+     g.add( (cvdr[dice], prov.hadPrimarySource, cvdr.GovMeasuresCovidDataset) )
+     g.add( (cvdr.GovMeasuresCovidDataset, RDF.type, prov.Entity) )
+     g.add( (cvdr.GovMeasuresCovidDataset, prov.generatedAtTime, Literal("2021-02-22T02:52:02Z",datatype=XSD.dateTime)) )
+     g.add( (cvdr.GovMeasuresCovidDataset, prov.wasDerivedFrom, Literal("https://data.humdata.org/dataset/acaps-covid19-government-measures-dataset",datatype=XSD.string)) )
 
      
      # Remove the triples that I marked as "unknown"

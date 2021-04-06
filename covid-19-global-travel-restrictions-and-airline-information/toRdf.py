@@ -94,18 +94,18 @@ def handleFile():
                 iso = row[heading].split(',')
                 for isoitem in iso:
                     isoitem = isoitem.strip()
-                    g.add( (dice, cvdo.hasISO3, cvdo[isoitem]) )
-                    g.add( (cvdo[isoitem], RDF.type, cvdo.Iso) )
-                    g.add( (cvdo[isoitem], cvdo.iso3, metaobject) )
+                    g.add( (dice, cvdo.hasISO3, ndice[isoitem]) )
+                    g.add( (ndice[isoitem], RDF.type, cvdo.Iso) )
+                    g.add( (ndice[isoitem], cvdo.iso3, metaobject) )
                     iso2 = pycountry.countries.get(alpha_3=row[heading])
                     if iso2:
-                        g.add( (cvdo[isoitem], dowl.isoCodeRegion, Literal(iso2.alpha_2,datatype=XSD.string)) )
+                        g.add( (ndice[isoitem], dowl.isoCodeRegion, Literal(iso2.alpha_2,datatype=XSD.string)) )
 
             if heading == "adm0_name":
                adm = capitalizeWords(row[heading])
-               g.add( (dice, cvdo.hasCountry, cvdo[adm]) )
-               g.add( (cvdo[adm], RDF.type, dowl.Country) )
-               g.add( (cvdo[adm], RDFS.label, metaobject) )
+               g.add( (dice, cvdo.hasCountry, ndice[adm]) )
+               g.add( (ndice[adm], RDF.type, dowl.Country) )
+               g.add( (ndice[adm], RDFS.label, metaobject) )
 
             if heading == 'source' and "http" in row[heading]:
                 metaobject = URIRef(row[heading])
@@ -118,9 +118,9 @@ def handleFile():
                 g.add( (dice, metapredicate, metaobject) )
 
             # the provenance
-            g.add( (dice, prov.hadPrimarySource, cvdo.AirlineRestrictionsCovidDataset) )
-            g.add( (cvdo.AirlineRestrictionsCovidDataset, RDF.type, prov.Entity) )
-            g.add( (cvdo.AirlineRestrictionsCovidDataset, prov.wasDerivedFrom, Literal("https://data.humdata.org/dataset/covid-19-global-travel-restrictions-and-airline-information",datatype=XSD.string)) )
+            g.add( (dice, prov.hadPrimarySource, ndice.AirlineRestrictionsCovidDataset) )
+            g.add( (ndice.AirlineRestrictionsCovidDataset, RDF.type, prov.Entity) )
+            g.add( (ndice.AirlineRestrictionsCovidDataset, prov.wasDerivedFrom, Literal("https://data.humdata.org/dataset/covid-19-global-travel-restrictions-and-airline-information",datatype=XSD.string)) )
 
     print('COVID-19 airline restrictions information has finished')
 
@@ -157,19 +157,19 @@ def handleFile():
                iso = row[heading].split(',')
                for isoitem in iso:
                    isoitem = isoitem.strip()
-                   g.add( (dice, cvdo.hasISO3, cvdo[isoitem]) )
-                   g.add( (cvdo[isoitem], RDF.type, cvdo.Iso) )
-                   g.add( (cvdo[isoitem], cvdo.iso3, metaobject) )
+                   g.add( (dice, cvdo.hasISO3, ndice[isoitem]) )
+                   g.add( (ndice[isoitem], RDF.type, cvdo.Iso) )
+                   g.add( (ndice[isoitem], cvdo.iso3, metaobject) )
                    iso2 = pycountry.countries.get(alpha_3=row[heading])
                    if iso2:
-                        g.add( (cvdo[isoitem], dowl.isoCodeRegion, Literal(iso2.alpha_2,datatype=XSD.string)) )
+                        g.add( (ndice[isoitem], dowl.isoCodeRegion, Literal(iso2.alpha_2,datatype=XSD.string)) )
 
 
             if heading == "adm0_name":
                adm = capitalizeWords(row[heading])
-               g.add( (dice, cvdo.hasCountry, cvdo[adm]) )
-               g.add( (cvdo[adm], RDF.type, dowl.Country) )
-               g.add( (cvdo[adm], RDFS.label, metaobject) )
+               g.add( (dice, cvdo.hasCountry, ndice[adm]) )
+               g.add( (ndice[adm], RDF.type, dowl.Country) )
+               g.add( (ndice[adm], RDFS.label, metaobject) )
 
             if heading == 'source' and "http" in row[heading]:
                 metaobject = URIRef(row[heading])
@@ -182,10 +182,10 @@ def handleFile():
                 g.add( (dice, metapredicate, metaobject) )
 
             # the provenance
-            g.add( (dice, prov.hadPrimarySource, cvdo.AirlineRestrictionsCovidDataset) )
-            g.add( (cvdo.AirlineRestrictionsCovidDataset, RDF.type, prov.Entity) )
-            g.add( (cvdo.AirlineRestrictionsCovidDataset, prov.generatedAtTime, Literal("2021-02-22T02:52:02Z",datatype=XSD.dateTime)) )
-            g.add( (cvdo.AirlineRestrictionsCovidDataset, prov.wasDerivedFrom, Literal("https://data.humdata.org/dataset/covid-19-global-travel-restrictions-and-airline-information",datatype=XSD.string)) )
+            g.add( (dice, prov.hadPrimarySource, ndice.AirlineRestrictionsCovidDataset) )
+            g.add( (ndice.AirlineRestrictionsCovidDataset, RDF.type, prov.Entity) )
+            g.add( (ndice.AirlineRestrictionsCovidDataset, prov.generatedAtTime, Literal("2021-02-22T02:52:02Z",datatype=XSD.dateTime)) )
+            g.add( (ndice.AirlineRestrictionsCovidDataset, prov.wasDerivedFrom, Literal("https://data.humdata.org/dataset/covid-19-global-travel-restrictions-and-airline-information",datatype=XSD.string)) )
 
 
     print('COVID-19 travel restrictions by country has finished')

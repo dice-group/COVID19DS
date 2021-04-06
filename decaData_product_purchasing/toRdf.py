@@ -90,12 +90,12 @@ def handleFile():
 					# print(zipcodeInfo[0]['country'])
 					# Country
 					adm = zipcodeInfo[0]['country']
-					g.add( (dice, cvdo.hasCountry, cvdo[adm]) )
+					g.add( (dice, cvdo.hasCountry, ndice[adm]) )
 					g.add( (dice, cvdo.hasCity, Literal(zipcodeInfo[0]['city'],datatype=XSD.string)) ) # city
 					g.add( (dice, cvdo.hasCounty, Literal(zipcodeInfo[0]['county'],datatype=XSD.string)) ) # county
 					g.add( (dice, geo.geometry, Literal('POINT('+zipcodeInfo[0]['lat']+' '+zipcodeInfo[0]['long']+')', datatype=virtrdf.Geometry)) ) # lat lon
-					g.add( (cvdo[adm], RDF.type, dowl.Country) )
-					g.add( (cvdo[adm], RDFS.label, Literal(adm,datatype=XSD.string)) )
+					g.add( (ndice[adm], RDF.type, dowl.Country) )
+					g.add( (ndice[adm], RDFS.label, Literal(adm,datatype=XSD.string)) )
 
 			if heading == 'NET_SALES' or heading == 'GROSS_SALES':
 				metaobject = Literal(row[heading],datatype=XSD.float)
@@ -108,10 +108,10 @@ def handleFile():
 				g.add( (dice, metapredicate, metaobject) )
 
 			# the provenance
-			g.add( (dice, prov.hadPrimarySource, cvdo.ProductPurchasingCovidDataset) )
-			g.add( (cvdo.ProductPurchasingCovidDataset, RDF.type, prov.Entity) )
-			g.add( (cvdo.ProductPurchasingCovidDataset, prov.generatedAtTime, Literal("2021-02-22T02:52:02Z",datatype=XSD.dateTime)) )
-			g.add( (cvdo.ProductPurchasingCovidDataset, prov.wasDerivedFrom, Literal("http://decadata.io/",datatype=XSD.string)) )
+			g.add( (dice, prov.hadPrimarySource, ndice.ProductPurchasingCovidDataset) )
+			g.add( (ndice.ProductPurchasingCovidDataset, RDF.type, prov.Entity) )
+			g.add( (ndice.ProductPurchasingCovidDataset, prov.generatedAtTime, Literal("2021-02-22T02:52:02Z",datatype=XSD.dateTime)) )
+			g.add( (ndice.ProductPurchasingCovidDataset, prov.wasDerivedFrom, Literal("http://decadata.io/",datatype=XSD.string)) )
 
 
 	print('csv has finished')

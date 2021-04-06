@@ -81,15 +81,15 @@ def handleFile():
 
 			if heading == "ISO1_3C":
 			   iso = row[heading]
-			   g.add( (dice, cvdo.hasISO3, cvdo[iso]) )
-			   g.add( (cvdo[iso], RDF.type, cvdo.Iso) )
-			   g.add( (cvdo[iso], dowl.isoCodeRegion, metaobject) )
+			   g.add( (dice, cvdo.hasISO3, ndice[iso]) )
+			   g.add( (ndice[iso], RDF.type, cvdo.Iso) )
+			   g.add( (ndice[iso], dowl.isoCodeRegion, metaobject) )
 
 			if heading == "Admin0":
 			   adm = capitalizeWords(row[heading])
-			   g.add( (dice, cvdo.hasCountry, cvdo[adm]) )
-			   g.add( (cvdo[adm], RDF.type, dowl.Country) )
-			   g.add( (cvdo[adm], RDFS.label, metaobject) )
+			   g.add( (dice, cvdo.hasCountry, ndice[adm]) )
+			   g.add( (ndice[adm], RDF.type, dowl.Country) )
+			   g.add( (ndice[adm], RDFS.label, metaobject) )
 
 			if heading == "Type":
 				metapredicate = cvdo.caseType
@@ -102,10 +102,10 @@ def handleFile():
 				g.add( (dice, RDF.type, cvdo.GeospatialData) )
 				g.add( (dice, metapredicate, metaobject) )
 			# the provenance
-			g.add( (dice, prov.hadPrimarySource, cvdo.UnifiedCovidDataset) )
-			g.add( (cvdo.UnifiedCovidDataset, RDF.type, prov.Entity) )
-			g.add( (cvdo.UnifiedCovidDataset, prov.generatedAtTime, Literal("2021-02-22T02:52:02Z",datatype=XSD.dateTime)) )
-			g.add( (cvdo.UnifiedCovidDataset, prov.wasDerivedFrom, Literal("https://github.com/CSSEGISandData/COVID-19_Unified-Dataset",datatype=XSD.string)) )
+			g.add( (dice, prov.hadPrimarySource, ndice.UnifiedCovidDataset) )
+			g.add( (ndice.UnifiedCovidDataset, RDF.type, prov.Entity) )
+			g.add( (ndice.UnifiedCovidDataset, prov.generatedAtTime, Literal("2021-02-22T02:52:02Z",datatype=XSD.dateTime)) )
+			g.add( (ndice.UnifiedCovidDataset, prov.wasDerivedFrom, Literal("https://github.com/CSSEGISandData/COVID-19_Unified-Dataset",datatype=XSD.string)) )
 
 
 	print('Csv has finished') 
@@ -120,18 +120,18 @@ def handleFile():
 	for i in range(0, len(policy['ID'])):
 	    dice = URIRef(resourse+str(policy['ID'][i]))
 	    pol = 'Policy_'+str(policy['ID'][i])+'_'+ policy['PolicyType'][i]+'_'+str(policy['Date'][i])
-	    g.add( (dice, cvdo.hasPolicy, cvdo[pol]) )
-	    g.add( (cvdo[pol], RDF.type, cvdo.Policy) )
-	    g.add( (cvdo[pol], cvdo.date, Literal(policy['Date'][i],datatype=XSD.date)) )
-	    g.add( (cvdo[pol], cvdo.policyType, Literal(policy['PolicyType'][i],datatype=XSD.string)) )
+	    g.add( (dice, cvdo.hasPolicy, ndice[pol]) )
+	    g.add( (ndice[pol], RDF.type, cvdo.Policy) )
+	    g.add( (ndice[pol], cvdo.date, Literal(policy['Date'][i],datatype=XSD.date)) )
+	    g.add( (ndice[pol], cvdo.policyType, Literal(policy['PolicyType'][i],datatype=XSD.string)) )
 	    if not isnan(policy['PolicyValue'][i]):
-	        g.add( (cvdo[pol], cvdo.policyValue, Literal(policy['PolicyValue'][i],datatype=XSD.double)) )
+	        g.add( (ndice[pol], cvdo.policyValue, Literal(policy['PolicyValue'][i],datatype=XSD.double)) )
 	    if not isnan(policy['PolicyFlag'][i]):
-	        g.add( (cvdo[pol], cvdo.policyFlag, Literal(policy['PolicyFlag'][i],datatype=XSD.boolean)) )
+	        g.add( (ndice[pol], cvdo.policyFlag, Literal(policy['PolicyFlag'][i],datatype=XSD.boolean)) )
 	    if not isnan(policy['PolicySource'][i]):
-	        g.add( (cvdo[pol], cvdo.policySource, Literal(policy['PolicySource'][i],datatype=XSD.string)) )
+	        g.add( (ndice[pol], cvdo.policySource, Literal(policy['PolicySource'][i],datatype=XSD.string)) )
 	    if not isnan(policy['PolicyNotes'][i]):
-	        g.add( (cvdo[pol], cvdo.policyNotes, Literal(policy['PolicyNotes'][i],datatype=XSD.string)) )
+	        g.add( (ndice[pol], cvdo.policyNotes, Literal(policy['PolicyNotes'][i],datatype=XSD.string)) )
 
 	# covid19
 	result1 = pyreadr.read_r('COVID-19.RData')
@@ -140,20 +140,20 @@ def handleFile():
 	for i in range(0, len(covid19data['ID'])):
 	    dice = URIRef(resourse+str(covid19data['ID'][i]))
 	    pol = 'Covid19Data_'+str(covid19data['ID'][i])+'_'+ covid19data['Type'][i]+'_'+str(covid19data['Date'][i])
-	    g.add( (dice, cvdo.hasCasesPerAgeRecord, cvdo[pol]) )
-	    g.add( (cvdo[pol], RDF.type, cvdo.CasesPerAgeRecord) )
-	    g.add( (cvdo[pol], cvdo.date, Literal(covid19data['Date'][i],datatype=XSD.date)) )
-	    g.add( (cvdo[pol], cvdo.type, Literal(covid19data['Type'][i],datatype=XSD.string)) )
+	    g.add( (dice, cvdo.hasCasesPerAgeRecord, ndice[pol]) )
+	    g.add( (ndice[pol], RDF.type, cvdo.CasesPerAgeRecord) )
+	    g.add( (ndice[pol], cvdo.date, Literal(covid19data['Date'][i],datatype=XSD.date)) )
+	    g.add( (ndice[pol], cvdo.type, Literal(covid19data['Type'][i],datatype=XSD.string)) )
 	    if not isnan(covid19data['Cases'][i]):
-	        g.add( (cvdo[pol], cvdo.cases, Literal(covid19data['Cases'][i],datatype=XSD.nonNegativeInteger)) )
+	        g.add( (ndice[pol], cvdo.cases, Literal(covid19data['Cases'][i],datatype=XSD.nonNegativeInteger)) )
 	    if not isnan(covid19data['Cases_New'][i]):
-	        g.add( (cvdo[pol], cvdo.casesNew, Literal(covid19data['Cases_New'][i],datatype=XSD.nonNegativeInteger)) )
+	        g.add( (ndice[pol], cvdo.casesNew, Literal(covid19data['Cases_New'][i],datatype=XSD.nonNegativeInteger)) )
 	    if not isnan(covid19data['Age'][i]):
-	        g.add( (cvdo[pol], cvdo.age, Literal(covid19data['Age'][i],datatype=XSD.string)) )
+	        g.add( (ndice[pol], cvdo.age, Literal(covid19data['Age'][i],datatype=XSD.string)) )
 	    if not isnan(covid19data['Sex'][i]):
-	        g.add( (cvdo[pol], cvdo.sex, Literal(covid19data['Sex'][i],datatype=XSD.string)) )
+	        g.add( (ndice[pol], cvdo.sex, Literal(covid19data['Sex'][i],datatype=XSD.string)) )
 	    if not isnan(covid19data['Source'][i]):
-	        g.add( (cvdo[pol], cvdo.source, Literal(covid19data['Source'][i],datatype=XSD.string)) )
+	        g.add( (ndice[pol], cvdo.source, Literal(covid19data['Source'][i],datatype=XSD.string)) )
 
 
 reader = pd.read_csv('COVID-19_LUT.csv', keep_default_na=False).to_dict('records', into=OrderedDict)
