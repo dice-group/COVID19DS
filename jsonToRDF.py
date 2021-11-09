@@ -29,6 +29,7 @@ fabio = Namespace("http://purl.org/spar/fabio/")
 cvdo = Namespace("https://covid-19ds.data.dice-research.org/ontology/")
 ndice = Namespace("https://covid-19ds.data.dice-research.org/resource/") #cvdr
 FOAF = Namespace('http://xmlns.com/foaf/0.1/')
+dbo = Namespace("https://dbpedia.org/ontology/")
 
 def addAuthors(authors, subject):
     for a in authors:
@@ -51,7 +52,10 @@ def addAuthors(authors, subject):
             if len(aff['laboratory']) != 0:
                 g.add( (ndice[name], cvdo.hasLab, Literal(aff['laboratory'],datatype=XSD.string)) )
             if len(aff['institution']) != 0:
-                g.add( (ndice[name], bibtex.hasInstitution, Literal(aff['institution'],datatype=XSD.string)) )
+                inst = re.sub("[^A-Za-z0-9]", "", aff['institution'])
+                g.add( (ndice[name], bibtex.hasInstitution, ndice[inst]) )
+                g.add( (ndice[inst], RDF.type, dbo.EducationalInstitution) )
+                g.add( (ndice[inst], RDFS.label, Literal(aff['institution'],datatype=XSD.string)) )
             if len(aff['location']) != 0:
                 location = aff['location']
                 if 'settlement' in location and len(location['settlement']) != 0:    
@@ -80,7 +84,7 @@ def addBibEntries(bib_entries, sectionObject, sectionOntology, datastore, link, 
         if bib_entry['pages']:
             g.add( (sectionObject[bibId], bibtex.Inbook , Literal(bib_entry['pages'],datatype=XSD.string)) )
         if 'DOI' in bib_entry['other_ids'] and bib_entry['other_ids']['DOI']:
-            g.add( (sectionObject[bibId], bibo.doi , Literal(bib_entry['other_ids']['DOI'][0],datatype=XSD.string)) )
+            g.add( (sectionObject[bibId], bibo.doi , Literal(bib_entry['other_ids']['DOI'][0].replace(' ', ''),datatype=XSD.string)) )
         # if bib_entry['other_ids']:
             # print(bib_entry['other_ids'])
 
@@ -186,6 +190,7 @@ def handleFile(filename):
     g.namespace_manager.bind("bibo", bibo)
     g.namespace_manager.bind("fabio", fabio)
     g.namespace_manager.bind("owl", OWL)
+    g.namespace_manager.bind("dbo", dbo)
 
     # metadata
     pmcid = None
