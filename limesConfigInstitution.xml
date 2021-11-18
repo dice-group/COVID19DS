@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE LIMES SYSTEM "limes.dtd">
+<LIMES>
+    <PREFIX>
+	   	<NAMESPACE>http://xmlns.com/foaf/0.1/</NAMESPACE>
+	   	<LABEL>foaf</LABEL>
+    </PREFIX>
+    <PREFIX>
+        <NAMESPACE>http://www.w3.org/2002/07/owl#</NAMESPACE>
+        <LABEL>owl</LABEL>
+    </PREFIX>
+    <PREFIX>
+        <NAMESPACE>http://www.w3.org/2011/http#</NAMESPACE>
+        <LABEL>http</LABEL>
+    </PREFIX>
+    <PREFIX>
+		<NAMESPACE>http://linkedgeodata.org/ontology/</NAMESPACE>
+		<LABEL>lgdo</LABEL>
+    </PREFIX>
+    <PREFIX>
+		<NAMESPACE>https://dbpedia.org/ontology/</NAMESPACE>
+		<LABEL>dbo</LABEL>
+    </PREFIX>
+
+	<SOURCE>
+		<ID>covidInstitution</ID>
+		<ENDPOINT>/home/user/Documents/work/COVID19DS/corona.ttl</ENDPOINT>
+		<VAR>?x</VAR>
+		<PAGESIZE>-1</PAGESIZE>
+		<RESTRICTION>?x a dbo:EducationalInstitution</RESTRICTION>
+		<PROPERTY>rdfs:label RENAME name</PROPERTY>
+		<TYPE>TURTLE</TYPE>
+	</SOURCE>
+
+
+	<TARGET>
+		<ID>covidInstitution2</ID>
+		<ENDPOINT>http://makg.org/sparql</ENDPOINT>
+		<VAR>?y</VAR>
+		<PAGESIZE>-1</PAGESIZE>
+		<RESTRICTION>?y a &lt;http://makg.org/class/Affiliation&gt;</RESTRICTION>
+		<PROPERTY>foaf:name RENAME name</PROPERTY>
+	</TARGET>
+
+
+	<METRIC>ExactMatch(x.name,y.name)|0.6</METRIC>
+	<ACCEPTANCE>
+		<THRESHOLD>1.0</THRESHOLD>
+		<FILE>institutions_sameAs.nt</FILE>
+		<RELATION>owl:sameAs</RELATION>
+	</ACCEPTANCE>
+
+	<REVIEW>
+		<THRESHOLD>1.0</THRESHOLD>
+		<FILE>to_review.nt</FILE>
+		<RELATION>lgdo:near</RELATION>
+	</REVIEW>
+
+	<EXECUTION>
+		<REWRITER>default</REWRITER>
+		<PLANNER>default</PLANNER>
+		<ENGINE>owl:sameAs</ENGINE>
+	</EXECUTION>
+
+	<OUTPUT>NT</OUTPUT>
+</LIMES>
