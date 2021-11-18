@@ -77,7 +77,7 @@ def addBibEntries(bib_entries, sectionObject, sectionOntology, datastore, link, 
             g.add( (sectionObject[bibId], bibtex.hasYear , Literal(bib_entry['year'],datatype=XSD.nonNegativeInteger)) )
         if bib_entry['venue']:
             g.add( (sectionObject[bibId], schema.EventVenue , Literal(bib_entry['venue'],datatype=XSD.string)) )
-        if bib_entry['volume']:
+        if bib_entry['volume'] and bib_entry['volume'].isnumeric():
             g.add( (sectionObject[bibId], bibtex.hasVolume , Literal(bib_entry['volume'],datatype=XSD.nonNegativeInteger)) )
         if bib_entry['issn']:
             g.add( (sectionObject[bibId], bibtex.hasISSN , Literal(bib_entry['issn'],datatype=XSD.string)) )

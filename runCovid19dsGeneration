@@ -26,7 +26,7 @@ mv bibentries_bibentries1statistics.json $folderName
 ####################################################
 # upload files into hobbit ftp
 source pfile # PASSWORD="..."
-lftp -e "set ftp:ssl-protect-data true; mirror -R $folderName public/COVID19DS/archive/; bye" -u hobbit,$PASSWORD hobbitdata.informatik.uni-leipzig.de
+lftp -e "set ftp:ssl-protect-data true; set ssl:verify-certificate/93:3C:6D:DE:E9:5C:9C:41:A4:0F:9F:50:49:3D:82:BE:03:AD:87:BF no; mirror -R $folderName public/COVID19DS/archive/; bye" -u hobbit,$PASSWORD hobbitdata.informatik.uni-leipzig.de
 
 #####################################################
 # Update in virtuoso
