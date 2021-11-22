@@ -10,10 +10,6 @@
         <LABEL>owl</LABEL>
     </PREFIX>
     <PREFIX>
-        <NAMESPACE>http://www.w3.org/2011/http#</NAMESPACE>
-        <LABEL>http</LABEL>
-    </PREFIX>
-    <PREFIX>
 		<NAMESPACE>http://data.semanticweb.org/ns/swc/ontology#</NAMESPACE>
 		<LABEL>swc</LABEL>
     </PREFIX>

@@ -28,3 +28,10 @@ delete from DB.DBA.LOAD_LIST;
  rdf_loader_run();
  checkpoint;
  exit;
+
+delete from DB.DBA.LOAD_LIST;
+ commit work; 
+ ld_add('/rdfData/institutions_sameAs.nt','https://covid-19ds.data.dice-research.org/resource/corona');
+ rdf_loader_run();
+ checkpoint;
+ exit;

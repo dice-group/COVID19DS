@@ -10,6 +10,9 @@ sleep 1m
 # linking BibEntries
 java -Xmx110g -jar limes-core-1.7.1.jar limesConfigBibEntries.xml
 sleep 1m
+# linking Institutions
+java -Xmx110g -jar limes-core-1.7.1.jar limesConfigInstitution.xml
+sleep 1m
 stringVersion=version_
 now="$(date +'%Y-%m-%d')"
 folderName=$stringVersion$now
@@ -22,6 +25,7 @@ mv covidPublications_covidPublications1statistics.json $folderName
 mv publication_sameAs.nt $folderName
 mv bibEntries_hasPublication.nt $folderName
 mv bibentries_bibentries1statistics.json $folderName
+mv institutions_sameAs.nt $folderName
 
 ####################################################
 # upload files into hobbit ftp

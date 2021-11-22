@@ -10,10 +10,6 @@
         <LABEL>owl</LABEL>
     </PREFIX>
     <PREFIX>
-        <NAMESPACE>http://www.w3.org/2011/http#</NAMESPACE>
-        <LABEL>http</LABEL>
-    </PREFIX>
-    <PREFIX>
 		<NAMESPACE>http://linkedgeodata.org/ontology/</NAMESPACE>
 		<LABEL>lgdo</LABEL>
     </PREFIX>
