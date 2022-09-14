@@ -1,13 +1,15 @@
-# COVIDPUBGRAPH: A FAIR Knowledge Graph of COVID-19 Publications
-The rapid generation of large amounts of information about the coronavirus SARS-COV-2 and the disease COVID-19 makes it increasingly difficult to gain a comprehensive overview of current insights related to the disease. With this work, we aim to support the rapid access to a comprehensive data source on COVID-19 targeted especially at researchers. Our knowledge graph, COVIDPUBGRAPH, an RDF knowledge graph of scientific publications, abides by the Linked Data and FAIR principles. The base dataset for the extraction is CORD-19, a dataset of COVID-19-related publications, which is updated regularly. Consequently, COVIDPUBGRAPH is updated biweekly. Our generation pipeline applies named entity recognition, entity linking and link discovery approaches to the original data. The current version of COVIDPUBGRAPH contains 268,108,670 triples and is linked to 9 other datasets by over 1 million links. In our use case studies, we demonstrate the usefulness of our knowledge graph for different applications. COVIDPUBGRAPH is publicly available under the Creative Commons Attribution 4.0 International license.
+# CovidPubKG: A FAIR Knowledge Graph of COVID-19 Publications
+The rapid generation of large amounts of information about the coronavirus SARS-COV-2 and the disease COVID-19 makes it increasingly difficult to gain a comprehensive overview of current insights related to the disease. With this work, we aim to support the rapid access to a comprehensive data source on COVID-19 targeted especially at researchers. Our knowledge graph, CovidPubKG, an RDF knowledge graph of scientific publications, abides by the Linked Data and FAIR principles. The base dataset for the extraction is CORD-19, a dataset of COVID-19-related publications, which is updated regularly. Consequently, CovidPubKG is updated biweekly. Our generation pipeline applies named entity recognition, entity linking and link discovery approaches to the original data. The current version of CovidPubKG contains 268,108,670 triples and is linked to 9 other datasets by over 1 million links. In our use case studies, we demonstrate the usefulness of our knowledge graph for different applications. CovidPubKG is publicly available under the Creative Commons Attribution 4.0 International license.
 
 ## CovidPubKG Ontology
 
 ![alt text](https://github.com/dice-group/COVID19DS/blob/main/uml.png?raw=true)
 
+## Knowledge Graph Generation
+
 The RDF file generation is based on papers related to the COVID-19 and coronavirus-related research.
 
-To run the generation of the dataset, the following command is used:
+To run the generation of the knowledge graph, the following command is used:
 ```
 python3 jsonToRDF.py folderName/
 ```
