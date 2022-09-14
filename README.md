@@ -1,4 +1,10 @@
-# COVID19DS
+# COVIDPUBGRAPH: A FAIR Knowledge Graph of COVID-19 Publications
+The rapid generation of large amounts of information about the coronavirus SARS-COV-2 and the disease COVID-19 makes it increasingly difficult to gain a comprehensive overview of current insights related to the disease. With this work, we aim to support the rapid access to a comprehensive data source on COVID-19 targeted especially at researchers. Our knowledge graph, COVIDPUBGRAPH, an RDF knowledge graph of scientific publications, abides by the Linked Data and FAIR principles. The base dataset for the extraction is CORD-19, a dataset of COVID-19-related publications, which is updated regularly. Consequently, COVIDPUBGRAPH is updated biweekly. Our generation pipeline applies named entity recognition, entity linking and link discovery approaches to the original data. The current version of COVIDPUBGRAPH contains 268,108,670 triples and is linked to 9 other datasets by over 1 million links. In our use case studies, we demonstrate the usefulness of our knowledge graph for different applications. COVIDPUBGRAPH is publicly available under the Creative Commons Attribution 4.0 International license.
+
+## CovidPubKG Ontology
+
+![alt text](https://github.com/dice-group/COVID19DS/blob/main/uml.png?raw=true)
+
 The RDF file generation is based on papers related to the COVID-19 and coronavirus-related research.
 
 To run the generation of the dataset, the following command is used:
@@ -95,4 +101,25 @@ The example of the provenance information is shown below:
 ```turtle
 covid:nonCommercialUseDataset a prov:Entity ;
     prov:wasDerivedFrom "https://ai2-semanticscholar-cord-19.s3-us-west-2.amazonaws.com/2020-03-20/noncomm_use_subset.tar.gz" .
+```
+
+## How to cite
+
+```bibtex
+@article{nature_sd_patents,
+  added-at = {2022-02-03T12:41:23.000+0100},
+  author = {Pestryakova, Svetlana and Vollmers, Daniel and Sherif, Mohamed Ahmed and Heindorf, Stefan and Saleem, Muhammad and Moussallem, Diego and Ngomo, Axel-Cyrille Ngonga},
+  biburl = {https://www.bibsonomy.org/bibtex/24a08be85abeb4df17f52d22c7c390af5/dice-research},
+  interhash = {b6e1b27c01a29f3f93c8dd78603dabcc},
+  intrahash = {4a08be85abeb4df17f52d22c7c390af5},
+  journal = {Scientific Data},
+  keywords = {2022 Heindorf Moussallem Saleem Svetlana Vollmers dice knowgraphs limes ngonga sherif simba},
+  publisher = {Nature Publishing Group},
+  timestamp = {2022-02-03T12:41:23.000+0100},
+  title = {{CovidPubGraph: A FAIR Knowledge Graph of COVID-19 Publications}},
+  url = {https://papers.dice-research.org/2022/NSDJ_CovidPubGraph/public.pdf},
+  year = 2022
+}
+
+
 ```
